@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-primary mb-sm-2 text-center">Try to search something</legend>
+                <div class="form-group">
+                    {{ form.item(class="form-control form-control-lg ", placeholder="e.g. playstation 5") }}
+                </div>
+
+                <div class="row">
+                    <div class="form-group col col-md-auto">
+                        <label>Minimum price</label>
+                        {{ form.min_price(class="form-control", placeholder="e.g. 12") }}
+                    </div>
+
+                    <div class="form-group col col-md-auto">
+                        <label>Maximum price</label>
+                        {{ form.max_price(class="form-control", placeholder="e.g. 500") }}
+                    </div>
+                </div>
+
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
+{% endblock content %}
