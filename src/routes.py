@@ -12,7 +12,7 @@ results = [
         'rating': '4.6/5',
         'url': 'https://www.amazon.com/Detachable-Notebook-Ergonomic-Aluminum-Compatible/dp/B08DD82FRR/ref=sr_1_3'
                '?dchild=1&keywords=notebook+stand&qid=1616432225&sr=8-3',
-        'short_url': 'https://www.amazon.com/'
+        'short_url': 'www.amazon.com'
     },
     {
         'title': 'Global ROM Oneplus 8 5G Mobile Phone 12GB 256GB /8GB 128GB 6.55" 90Hz Snapdragon 865 48MP 30W '
@@ -22,14 +22,14 @@ results = [
         'url': 'https://www.aliexpress.com/item/4001263945664.html?spm=a2g0o.productlist.0.0.4e222876npEmQo&algo_pvid'
                '=44651afa-e2e7-48a1-b206-6d7e416144d5&algo_expid=44651afa-e2e7-48a1-b206-6d7e416144d5-0&btsid'
                '=0bb0623a16164323935431321ec84e&ws_ab_test=searchweb0_0,searchweb201602_,searchweb201603_',
-        'short_url': 'https://www.aliexpress.com/'
+        'short_url': 'www.aliexpress.com'
     },
     {
         'title': 'Monitor “Acer EK220Q”',
         'price': '185AZN',
         'rating': '0',
         'url': 'https://tap.az/elanlar/elektronika/komputer-avadanliqi/21120675',
-        'short_url': 'https://www.tap.az/'
+        'short_url': 'www.tap.az'
     }
 ]
 
