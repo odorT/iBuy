@@ -27,4 +27,20 @@
             </div>
         </form>
     </div>
+    <div class="content-section">
+        {% for data in res %}
+            <article class="media content-section">
+                <div class="media-body">
+                    <div>
+                        <h4><a class="article-title" href={{ data.get('url') }}>{{ data.get('title') }}</a></h4>
+                    </div>
+                    <h5 class="float-left font-weight-bold price-title">Price: {{ data.get('price') }}</h5>
+                    <h5 class="float-right rating-title">Rating: {{ data.get('rating') }}</h5>
+                </div>
+            </article>
+        {% else %}
+            <div>No such item</div>
+        {% endfor %}
+
+    </div>
 {% endblock content %}
