@@ -19,7 +19,7 @@ def about():
 @app.route("/search", methods=['GET', 'POST'])
 def search():
     form = SearchForm()
-    return render_template('search.html', title='Search', form=form)
+    return render_template('search.html', title='Search', form=form, post=posts)
 
 
 @app.route("/register", methods=['GET', 'POST'])
