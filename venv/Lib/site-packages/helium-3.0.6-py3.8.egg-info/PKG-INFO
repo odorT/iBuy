@@ -1,0 +1,25 @@
+Metadata-Version: 1.2
+Name: helium
+Version: 3.0.6
+Summary: Lighter browser automation based on Selenium.
+Home-page: https://github.com/mherrmann/selenium-python-helium
+Author: Michael Herrmann
+Author-email: michael+removethisifyouarehuman@herrmann.io
+License: UNKNOWN
+Description: UNKNOWN
+Keywords: helium selenium browser automation
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Topic :: Software Development :: Testing
+Classifier: Topic :: Software Development :: Libraries
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Operating System :: MacOS :: MacOS X
+Requires-Python: >=3

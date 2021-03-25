@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends 'layout.html' %}
 {% block content %}
     <div class="content-section-search">
         <form method="POST" action="">
@@ -46,3 +46,15 @@
         {% endfor %}
     </div>
 {% endblock content %}
+
+{% block sidebar %}
+    <div class="col-md-4">
+        <div class="content-section">
+            <h3>News</h3>
+            <p class='text-muted'>The list of supported e-commerce websites.</p>
+            <div><a href='https://www.amazon.com/' for="">amazon.com</a></div>
+            <div><a href="https://www.aliexpress.com/" for="">aliexpress.com</a></div>
+            <div><a href="https://tap.az/" for="">tap.az</a></div>
+        </div>
+    </div>
+{% endblock sidebar %}
