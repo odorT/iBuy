@@ -1,45 +1,46 @@
 ## **Easyfind** is a multi-search engine that will find products on 3 (amazon.com, aliexpress.com, tap.az) e-commerce websites
 ### Python, Flask, WTForms, Selenium Webdriver, Bootstrap
 ### Requirements
-appdirs           1.4.4
-beautifulsoup4    4.9.3
-bs4               0.0.1
-certifi           2020.12.5
-chardet           4.0.0
-chromedriver      2.24.1
-click             7.1.2
-colorama          0.4.4
-configparser      5.0.2
-crayons           0.4.0
-cssselect         1.1.0
-dnspython         2.1.0
-email-validator   1.1.2
-fake-useragent    0.1.11
-Flask             1.1.2
-Flask-SQLAlchemy  2.5.1
-Flask-WTF         0.14.3
-greenlet          1.0.0
-idna              2.10
-itsdangerous      1.1.0
-Jinja2            2.11.3
-lxml              4.6.3
-MarkupSafe        1.1.1
-parse             1.19.0
-pip               21.0.1
-pyee              8.1.0
-pyppeteer         0.2.5
-pyquery           1.4.3
-requests          2.25.1
-requests-html     0.10.0
-selenium          3.141.0
-setuptools        54.1.2
-six               1.15.0
-soupsieve         2.2.1
-SQLAlchemy        1.4.2
-tqdm              4.59.0
-urllib3           1.26.4
-w3lib             1.22.0
-webdriver-manager 3.3.0
-websockets        8.1
-Werkzeug          1.0.1
-WTForms           2.3.3
+- appdirs           1.4.4
+- beautifulsoup4    4.9.3
+- bs4               0.0.1
+- certifi           2020.12.5
+- chardet           4.0.0
+- chromedriver      2.24.1
+- click             7.1.2
+- colorama          0.4.4
+- configparser      5.0.2
+- crayons           0.4.0
+- cssselect         1.1.0
+- dnspython         2.1.0
+- email-validator   1.1.2
+- fake-useragent    0.1.11
+- Flask             1.1.2
+- Flask-SQLAlchemy  2.5.1
+- Flask-WTF         0.14.3
+- greenlet          1.0.0
+- helium            3.0.6 
+- idna              2.10
+- itsdangerous      1.1.0
+- Jinja2            2.11.3
+- lxml              4.6.3
+- MarkupSafe        1.1.1
+- parse             1.19.0
+- pip               21.0.1
+- pyee              8.1.0
+- pyppeteer         0.2.5
+- pyquery           1.4.3
+- requests          2.25.1
+- requests-html     0.10.0
+- selenium          3.141.0
+- setuptools        54.1.2
+- six               1.15.0
+- soupsieve         2.2.1
+- SQLAlchemy        1.4.2
+- tqdm              4.59.0
+- urllib3           1.26.4
+- w3lib             1.22.0
+- webdriver-manager 3.3.0
+- websockets        8.1
+- Werkzeug          1.0.1
+- WTForms           2.3.3
