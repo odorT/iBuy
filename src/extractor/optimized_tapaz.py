@@ -5,12 +5,10 @@ from webdriver_manager.chrome import ChromeDriverManager
 import time
 from bs4 import BeautifulSoup
 
-# setting main variables
-url = 'https://tap.az/'
-item = 'iphone 11'
-timeout = 0.3
-headless = False
-
+item = 'iphone 11'      # item that will be searched
+timeout = 0.3           # scroll timeout
+headless = True         # chrome start option(set False to see all actions )
+url = 'https://tap.az/elanlar?&keywords=' + item
 
 # Starting chrome browser with defined options
 options = ChromeOptions()
@@ -26,17 +24,11 @@ start_time = time.time()
 
 driver.get(url)
 
-# following code will locate input field and submit button
-input_field = driver.find_element_by_xpath('.//*[@id="keywords"]')
-submit_btn = driver.find_element_by_xpath('.//*[@id="header"]/div[2]/div[1]/form/div[3]/button')
-input_field.send_keys(item)
-submit_btn.send_keys(ENTER)
+end1_time = time.time()
 
 # while loop will scroll down until it reaches the end of the page
 # this part is important, because dynamically loaded websites like tap.az
 # loads data while scrolling
-
-end1_time = time.time()
 
 number_of_scrolls = 0
 reached_page_end = False
