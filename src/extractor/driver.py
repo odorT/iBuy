@@ -37,4 +37,4 @@ class Driver(metaclass=Singleton):
         self.driver.quit()
 
 
-chrome_driver = Driver(False)
+chrome_driver = Driver(True)

@@ -1,5 +1,6 @@
+import os
 from src import app
-from flask import render_template, url_for, flash, redirect
+from flask import render_template, url_for, flash, redirect, send_from_directory
 from src.forms import RegistrationForm, LoginForm, SearchForm
 from src.extractor.scraper_tapaz import Scrape
 
