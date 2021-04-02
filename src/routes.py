@@ -1,8 +1,7 @@
 from src import app
 from flask import render_template, url_for, flash, redirect
 from src.forms import RegistrationForm, LoginForm, SearchForm
-from src.models import User
-from src.extractor.optimized_tapaz import main
+from src.extractor.scraper_tapaz import Scrape
 
 
 @app.route("/")
@@ -19,9 +18,13 @@ def about():
 @app.route("/search", methods=['GET', 'POST'])
 def search():
     form = SearchForm()
-    products_api = main(form.item.data, 0.4, True)
-    total_products = len(products_api)
-    return render_template('search.html', title='Search', form=form, products_api=products_api, total=total_products)
+    item = form.item.data
+    if item:
+        scraper = Scrape(form.item.data, 0.4)
+        products_api = scraper.api_generator()
+    else:
+        products_api = []
+    return render_template('search.html', title='Search', form=form, products_api=products_api)
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -43,4 +46,3 @@ def login():
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', title='Login', form=form)
-
