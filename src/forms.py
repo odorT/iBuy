@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, FloatField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, FloatField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 
@@ -23,3 +23,6 @@ class SearchForm(FlaskForm):
     min_price = FloatField('Minimum Price')
     max_price = FloatField('Maximum Price')
     submit = SubmitField('Find it!')
+
+    choices = ['Ascending sort', 'Descending sort']
+    menu_field = SelectField(u'Advanced search', choices=choices)

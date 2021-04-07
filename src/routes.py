@@ -1,6 +1,6 @@
 import os
 from src import app
-from flask import render_template, url_for, flash, redirect, send_from_directory
+from flask import render_template, url_for, flash, redirect
 from src.forms import RegistrationForm, LoginForm, SearchForm
 from src.extractor.scraper_tapaz import Scrape
 
@@ -19,12 +19,15 @@ def about():
 @app.route("/search", methods=['GET', 'POST'])
 def search():
     form = SearchForm()
+
     item = form.item.data
+    min_price = form.min_price.data
+    max_price = form.max_price.data
     if item:
-        scraper = Scrape(form.item.data, 0.4)
+        scraper = Scrape(form.item.data, timeout=0.4, min_price=min_price, max_price=max_price)
         products_api = scraper.api_generator()
     else:
-        products_api = []
+        products_api = {}
     return render_template('search.html', title='Search', form=form, products_api=products_api)
 
 

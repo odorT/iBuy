@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver import ChromeOptions
+
 from webdriver_manager.chrome import ChromeDriverManager
 
 
@@ -14,13 +15,15 @@ class Singleton(type):
         return cls._instances[cls]
 
 
-class Driver(metaclass=Singleton):
-    __metaclass__ = Singleton
+class Driver:
+    # (metaclass=Singleton)
+    # __metaclass__ = Singleton
 
     def __init__(self, headless):
         self.headless = headless
         self.options = ChromeOptions()
         self.options.add_argument("--window-size=1600, 490")
+        self.options.add_argument("--disable-infobars")
         self.options.headless = self.headless
         self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.options)
         self.driver.implicitly_wait(30)
@@ -28,13 +31,12 @@ class Driver(metaclass=Singleton):
     def get_driver(self):
         return self.driver
 
-    def set_headless(self, headless):
-        self.headless = headless
-
     def stop_chrome(self):
         print('>> Quiting and closing the browser')
         self.driver.close()
         self.driver.quit()
 
 
-chrome_driver = Driver(True)
+tapaz_driver = Driver(True)
+# amazon_driver = Driver(False)
+# aliexpress_driver = Driver(False)
