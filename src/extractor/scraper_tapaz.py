@@ -13,7 +13,7 @@ AZN_TO_RUB = 44.75
 
 
 class Scrape_tapaz:
-    def __init__(self, item, timeout=0.4, mode='fast', min_price=None, max_price=None, sort_option=None, currency=None):
+    def __init__(self, item, mode='fast', timeout=0.4, min_price=None, max_price=None, sort_option=None, currency=None):
         self.item = item
         self.timeout = timeout
         self.mode = mode
@@ -133,7 +133,6 @@ class Scrape_tapaz:
 
     def get_api(self):
         api = self.api_generator()
-        print(self.sort_option, self.min_price, self.max_price, self.currency)
 
         if self.currency:
             api = self.with_currency(api)
@@ -145,8 +144,7 @@ class Scrape_tapaz:
         return api
 
     def driver_close(self):
-        self.driver.close()
-        self.driver.quit()
+        self.driver.stop_driver()
 
     def printer(self):
         # for i in self.product_api['data']:

@@ -1,8 +1,9 @@
 from src import app
 from flask import render_template, url_for, flash, redirect, request
 from src.forms import RegistrationForm, LoginForm, SearchForm
-from src.extractor.scraper_tapaz import Scrape_tapaz
+# from src.extractor.scraper_tapaz import Scrape_tapaz
 # from src.extractor.scraper_amazon import Scrape_amazon
+from src.extractor.distributor import Distributor
 
 
 @app.route("/")
@@ -25,23 +26,18 @@ def search():
     max_price = form.max_price.data
     sort_option = None
     currency = None
-    websites = []
-    for i in ['amazon', 'tapaz', 'aliexpress']:
-        if request.form.getlist(i) == ['on']:
-            websites.append(i)
+    websites = [
+        i
+        for i in ['amazon', 'tapaz', 'aliexpress']
+        if request.form.getlist(i) == ['on']
+    ]
+
     if request.method == 'POST':
         sort_option = request.form['sort']
         currency = request.form['currency']
 
-    if item:
-        scraper1 = Scrape_tapaz(item=item, timeout=0.4, min_price=min_price, max_price=max_price, sort_option=sort_option, currency=currency, mode=mode)
-        # scraper2 = Scrape_amazon(item=item, timeout=0.4, min_price=min_price, max_price=max_price, sort_option=sort_option, currency=currency, mode=mode)
-        products_api = scraper1.get_api()
-        # print(products_api['data'])
-        # print(scraper2.api_generator()['data'])
-        # products_api['data'] += scraper2.api_generator()['data']
-    else:
-        products_api = {}
+    products_api = Distributor(websites=websites, mode=mode, item=item, timeout=0.4, min_price=min_price,
+                               max_price=max_price, sort_option=sort_option, currency=currency).get_apis()
 
     return render_template('search.html', title='Search', form=form, products_api=products_api)
 

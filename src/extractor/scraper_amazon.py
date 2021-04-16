@@ -22,52 +22,99 @@ class Scrape_amazon:
         self.sort_option = None if sort_option == 'default' else sort_option
         self.currency = None if currency is None else currency
         self.driver = amazon_driver.get_driver()
-        self.url = 'https://www.amazon.com/s?k=' + item.replace(' ', '+')
+        self.url = 'https://www.amazon.com/s?k=' + self.item
         self.clean_url = 'https://www.amazon.com'
         self.product_api = {'data': []}
 
-    def api_generator(self):
-        product = self.item
-        if product == '':
-            return []
-        url = f'https://amazon.com/s?k={product}'
+    def with_currency(self, api):
+        pass
 
-        self.driver.get(url)
+    def with_price_limits(self, api):
+        pass
+
+    def with_sort_options(self, api):
+        pass
+
+    def source_page_generator(self):
+        # if self.mode == 'fast':
+        #     for page in range(4):
+        #         url = self.url + '&page=' + str(page)
+        pass
+
+    def api_generator(self):
+        time_start = time.time()
+
+        self.driver.get(self.url)
 
         soup = BeautifulSoup(self.driver.page_source, 'lxml')
         results = soup.find_all('div', {'data-component-type': 's-search-result'})
-
-        def scrapeInfo(item):
-            try:
-                atag = item.h2.a
-                title = atag.text.strip()
-                link = 'https://amazon.com' + atag.get('href')
-            except AttributeError:
-                title = "No title provided"
-            try:
-                price_parent = item.find('span', 'a-price')
-                price = price_parent.find('span', 'a-offscreen').text.strip()
-                price = float(price[1:].replace(',', ''))
-            except AttributeError:
-                price = 0
-            try:
-                rating = item.i.text
-            except AttributeError:
-                rating = "No rating provided"
-
-            product_data = {
-                'title': title,
-                'price_val': price,
-                'rating': rating,
-                'url': link,
-                'short_url': 'www.amazon.com'
-            }
-
-            return product_data
-
         for item in results:
-            record = scrapeInfo(item)
-            if record:
-                self.product_api['data'].append(record)
+            try:
+                title = item.find('span', class_='a-size-medium a-color-base a-text-normal').text
+                base_url = self.clean_url + item.find('a', class_='a-link-normal a-text-normal')['href']
+                price_val = item.find('span', class_='a-offscreen').text
+            except:
+                continue
+            try:
+                rating = item.find('i', class_='a-icon a-icon-star-small a-star-small-5 aok-align-bottom').text
+                rating_val = float(str(rating).replace(' out of ', '/').replace(' stars', '').replace('/5', ''))
+                rating_over = str(rating).replace(' out of ', '/').replace(' stars', '').split('/')[1]
+                rating = str(rating_val) + '/' + rating_over
+            except:
+                rating_val = None
+                rating_over = None
+                rating = None
+
+            self.product_api['data'].append({
+                'title': title,
+                'price_val': price_val,
+                'price_curr': 'USD',
+                'url': base_url,
+                'rating_val': rating_val,
+                'rating_over': rating_over,
+                'rating': rating,
+                'short_url': 'www.amazon.com'
+            })
+
+        time_end = time.time()
+
+        self.product_api.update({
+            'details': {
+                'exec_time': round((time_end - time_start), 2),
+                'total_num': len(self.product_api['data'])
+            }
+        })
 
         return self.product_api
+
+    def get_api(self):
+        api = self.api_generator()
+
+        if self.currency:
+            api = self.with_currency(api)
+        if self.min_price != 0 or self.max_price != PRICE_MAX:
+            api = self.with_price_limits(api)
+        if self.sort_option:
+            api = self.with_sort_options(api)
+
+        return api
+
+    def printer(self):
+        for i in self.product_api['data']:
+            print(f'Title: {i["title"]}')
+            print(f'Price: {i["price_val"]}')
+            print(f'Rating: {i["rating"]}')
+            print('\n\n')
+        print(self.product_api)
+
+    def driver_close(self):
+        self.driver.stop_driver()
+
+    def run(self):
+        self.api_generator()
+        self.printer()
+
+
+amazon = Scrape_amazon(item='kindle', timeout=0.4, mode='fast', min_price=100, max_price=500, sort_option='default',
+                       currency='USD')
+amazon.run()
