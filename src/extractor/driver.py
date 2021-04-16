@@ -1,6 +1,5 @@
 from selenium import webdriver
 from selenium.webdriver import ChromeOptions
-
 from webdriver_manager.chrome import ChromeDriverManager
 
 
@@ -38,5 +37,5 @@ class Driver:
 
 
 tapaz_driver = Driver(True)
-# amazon_driver = Driver(False)
+amazon_driver = Driver(True)
 # aliexpress_driver = Driver(False)

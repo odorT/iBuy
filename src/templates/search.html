@@ -22,19 +22,37 @@
                 </div>
 
             </fieldset>
+            <div>
+                <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+                    <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off" name="tapaz">
+                    <label for="btncheck1">tap.az</label><br>
+
+                    <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off" name="aliexpress">
+                    <label for="btncheck1">aliexpress.com</label><br>
+
+                    <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off" name="amazon">
+                    <label for="btncheck1">amazon.com</label><br>
+                </div>
+            </div>
             <div class="row">
                 <div class="form-group col col-md-auto">
                     {{ form.submit(class="btn btn-outline-info") }}
                 </div>
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Advanced filtering
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">Random</a>
-                        <a class="dropdown-item" href="#">Ascending</a>
-                        <a class="dropdown-item" href="#">Descending</a>
-                    </div>
+                    <label for="sort">Sort by price:</label>
+                    <select name="sort" id="sort" class="dropdown">
+                        <option name="default" value="default">Default</option>
+                        <option name="ascending" value="ascending">Ascending</option>
+                        <option name="descending" value="descending">Descending</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="currency">Currency:</label>
+                    <select name="currency" id="currency" class="dropdown">
+                        <option name="azn" value="azn">AZN</option>
+                        <option name="usd" value="usd">USD</option>
+                        <option name="rub" value="rub">RUB</option>
+                    </select>
                 </div>
             </div>
         </form>
@@ -57,7 +75,7 @@
                         <small class="float-none text-muted">from {{ product['short_url'] }}</small>
                     </div>
                     <div>
-                        <h5 class="float-left font-weight-bold price-title">Price: {{ product['price'] }}</h5>
+                        <h5 class="float-left font-weight-bold price-title">Price: {{ product['price_val'] }} {{ product['price_curr'] }}</h5>
                         <h5 class="float-right rating-title">Rating: {{ product['rating'] }}</h5>
                     </div>
                 </div>
@@ -73,9 +91,9 @@
         <div class="content-section">
             <h3>News</h3>
             <p class='text-muted'>The list of supported e-commerce websites.</p>
-            <div><a href='https://www.amazon.com/' for="">amazon.com</a></div>
-            <div><a href="https://www.aliexpress.com/" for="">aliexpress.com</a></div>
-            <div><a href="https://tap.az/" for="">tap.az</a></div>
+            <div><a href='https://www.amazon.com/'>amazon.com</a></div>
+            <div><a href="https://www.aliexpress.com/">aliexpress.com</a></div>
+            <div><a href="https://tap.az/">tap.az</a></div>
         </div>
     </div>
 {% endblock sidebar %}
