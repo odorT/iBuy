@@ -18,12 +18,13 @@ class Distributor:
             self.full_api['data'] += tapaz_api['data']
             self.full_api['details'] = tapaz_api['details']
 
-        # if 'amazon' in self.websites:
-        #     self.scraper2 = Scrape_amazon(mode=mode, item=item, timeout=timeout, min_price=min_price,
-        #                                   max_price=max_price,
-        #                                   sort_option=sort_option, currency=currency)
-        #     amazon_api = self.scraper2.api_generator()
-        #     self.full_api['data'] += amazon_api['data']
+        if 'amazon' in self.websites:
+            self.scraper2 = Scrape_amazon(mode=mode, item=item, timeout=timeout, min_price=min_price,
+                                          max_price=max_price,
+                                          sort_option=sort_option, currency=currency)
+            amazon_api = self.scraper2.get_api()
+            self.full_api['data'] += amazon_api['data']
+            self.full_api['details'] = amazon_api['details']
 
     def get_apis(self):
         return self.full_api

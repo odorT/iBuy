@@ -20,7 +20,7 @@ class Scrape_tapaz:
         self.min_price = 0 if min_price is None else min_price
         self.max_price = PRICE_MAX if max_price is None else max_price
         self.sort_option = None if sort_option == 'default' else sort_option
-        self.currency = None if currency is None else currency
+        self.currency = None if currency == 'default' is None else currency
         self.driver = tapaz_driver.get_driver()
         self.url = 'https://tap.az/elanlar?&keywords=' + item.replace(' ', '+')
         self.clean_url = 'https://tap.az/'

@@ -22,6 +22,6 @@ class Driver:
         self.driver.quit()
 
 
-tapaz_driver = Driver(True)
-amazon_driver = Driver(True)
+tapaz_driver = Driver(False)
+amazon_driver = Driver(False)
 # aliexpress_driver = Driver(False)

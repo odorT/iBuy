@@ -31,7 +31,6 @@ def search():
         for i in ['amazon', 'tapaz', 'aliexpress']
         if request.form.getlist(i) == ['on']
     ]
-
     if request.method == 'POST':
         sort_option = request.form['sort']
         currency = request.form['currency']

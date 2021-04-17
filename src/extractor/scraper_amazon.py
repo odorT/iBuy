@@ -20,20 +20,55 @@ class Scrape_amazon:
         self.min_price = 0 if min_price is None else min_price
         self.max_price = PRICE_MAX if max_price is None else max_price
         self.sort_option = None if sort_option == 'default' else sort_option
-        self.currency = None if currency is None else currency
+        self.currency = None if currency == 'default' is None else currency
         self.driver = amazon_driver.get_driver()
         self.url = 'https://www.amazon.com/s?k=' + self.item
         self.clean_url = 'https://www.amazon.com'
         self.product_api = {'data': []}
 
+    @staticmethod
+    def price_formatter(price_value):
+        if ' ' in price_value:
+            price_value = str(price_value).replace(' ', '')
+        if ',' in price_value:
+            price_value = price_value.replace(',', '')
+        if '$' in price_value:
+            price_value = price_value.replace('$', '')
+        return float(price_value)
+
     def with_currency(self, api):
-        pass
+        for data in api['data']:
+            if self.currency == 'usd':
+                if data['price_curr'] == 'AZN':
+                    data['price_val'] = round(data['price_val'] * AZN_TO_USD, 2)
+                elif data['price_curr'] == 'RUB':
+                    data['price_val'] = round(data['price_val'] * RUB_TO_USD, 2)
+                data['price_curr'] = 'USD'
+            elif self.currency == 'azn':
+                print(data['price_curr'])
+                print(data['price_val'])
+                if data['price_curr'] == 'USD':
+                    data['price_val'] = round(data['price_val'] * USD_TO_AZN, 2)
+                elif data['price_curr'] == 'RUB':
+                    data['price_val'] = round(data['price_val'] * RUB_TO_AZN, 2)
+                data['price_curr'] = 'AZN'
+            elif self.currency == 'rub':
+                if data['price_curr'] == 'USD':
+                    data['price_val'] = round(data['price_val'] * USD_TO_RUB, 2)
+                elif data['price_curr'] == 'AZN':
+                    data['price_val'] = round(data['price_val'] * AZN_TO_RUB, 2)
+                data['price_curr'] = 'RUB'
+
+        return api
 
     def with_price_limits(self, api):
-        pass
+        api['data'] = filter(lambda x: self.max_price > x['price_val'] >= self.min_price, api['data'])
+        # api['data'] = [x for x in api['data'] if self.max_price > x['price_val'] > self.min_price]
+        return api
 
     def with_sort_options(self, api):
-        pass
+        api['data'] = sorted(api['data'], key=lambda x: x['price_val'], reverse=(self.sort_option == 'descending'))
+        return api
 
     def source_page_generator(self):
         # if self.mode == 'fast':
@@ -52,11 +87,12 @@ class Scrape_amazon:
             try:
                 title = item.find('span', class_='a-size-medium a-color-base a-text-normal').text
                 base_url = self.clean_url + item.find('a', class_='a-link-normal a-text-normal')['href']
-                price_val = item.find('span', class_='a-offscreen').text
+                price_val = self.price_formatter(item.find('span', class_='a-offscreen').text)
+                price_curr = 'USD'
             except:
                 continue
             try:
-                rating = item.find('i', class_='a-icon a-icon-star-small a-star-small-5 aok-align-bottom').text
+                rating = item.find('span', class_='a-icon-alt').text
                 rating_val = float(str(rating).replace(' out of ', '/').replace(' stars', '').replace('/5', ''))
                 rating_over = str(rating).replace(' out of ', '/').replace(' stars', '').split('/')[1]
                 rating = str(rating_val) + '/' + rating_over
@@ -68,7 +104,7 @@ class Scrape_amazon:
             self.product_api['data'].append({
                 'title': title,
                 'price_val': price_val,
-                'price_curr': 'USD',
+                'price_curr': price_curr,
                 'url': base_url,
                 'rating_val': rating_val,
                 'rating_over': rating_over,
@@ -114,7 +150,3 @@ class Scrape_amazon:
         self.api_generator()
         self.printer()
 
-
-amazon = Scrape_amazon(item='kindle', timeout=0.4, mode='fast', min_price=100, max_price=500, sort_option='default',
-                       currency='USD')
-amazon.run()
