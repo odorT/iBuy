@@ -1,108 +1,217 @@
-{% extends 'layout.html' %}
-{% block content %}
-    <div class="content-section-search">
-        <form method="POST" action="">
-            {{ form.hidden_tag() }}
-            <fieldset class="form-group">
-                <legend class="border-primary mb-sm-2 text-center">Try to search something</legend>
-                <div class="form-group">
-                    {{ form.item(class="form-control form-control-lg ", placeholder="e.g. playstation 5") }}
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+
+    <title>iBuy</title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+</head>
+<body>
+<header class="site-header">
+    <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+        <div class="container">
+            <a class="navbar-brand mr-4" href="/">iBuy</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarToggle">
+                <div class="navbar-nav mr-auto">
+                    <a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a>
+                    <a class="nav-item nav-link" href="{{ url_for('search') }}">Search</a>
+                    <a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>
                 </div>
-
-                <div class="row">
-                    <div class="form-group col col-md-auto">
-                        <label>Minimum price</label>
-                        {{ form.min_price(class="form-control", placeholder="e.g. 12") }}
-                    </div>
-
-                    <div class="form-group col col-md-auto">
-                        <label>Maximum price</label>
-                        {{ form.max_price(class="form-control", placeholder="e.g. 500") }}
-                    </div>
+                <!-- Navbar Right Side -->
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
+                    <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
                 </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<main role="main" class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+                <div class="content-section-search container col-md-8">
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        <fieldset class="form-group">
+                            <legend class="border-primary mb-sm-2 text-center">Try to search something</legend>
+                            <div class="form-group">
+                                {{ form.item(class="form-control form-control-lg ", placeholder="e.g. playstation 5") }}
+                            </div>
 
-            </fieldset>
+                            <div class="row">
+                                <div class="form-group col col-md-auto">
+                                    <label>Minimum price</label>
+                                    {{ form.min_price(class="form-control", placeholder="e.g. 12") }}
+                                </div>
+
+                                <div class="form-group col col-md-auto">
+                                    <label>Maximum price</label>
+                                    {{ form.max_price(class="form-control", placeholder="e.g. 500") }}
+                                </div>
+                            </div>
+
+                        </fieldset>
+
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="btncheck1" autocomplete="off" name="tapaz">
+                            <label for="btncheck1" class="form-check-label">tap.az</label><br>
+
+                            <input type="checkbox" class="form-check-input" id="btncheck2" autocomplete="off" name="amazon">
+                            <label for="btncheck2" class="form-check-label">amazon.com</label><br>
+
+                            <input type="checkbox" class="form-check-input" id="btncheck3" autocomplete="off" name="aliexpress">
+                            <label for="btncheck3" class="form-check-label">aliexpress.com</label><br>
+                        </div>
+
+                        <div class="row" style="padding: 15px">
+                            <div class="dropdown" style="padding: 5px">
+                                <label for="sort_pr" class="figure">Sort by price:</label>
+                                <select name="sort_pr" id="sort_pr" class="dropdown">
+                                    <option name="default" value="default">Default</option>
+                                    <option name="ascending" value="ascending">Ascending</option>
+                                    <option name="descending" value="descending">Descending</option>
+                                </select>
+                            </div>
+                            <div class="dropdown" style="padding: 5px">
+                                <label for="sort_rat">Sort by rating:</label>
+                                <select name="sort_rat" id="sort_rat" class="dropdown">
+                                    <option name="default" value="default">Default</option>
+                                    <option name="ascending" value="ascending">Ascending</option>
+                                    <option name="descending" value="descending">Descending</option>
+                                </select>
+                            </div>
+                            <div class="dropdown" style="padding: 5px">
+                                <label for="currency">Currency:</label>
+                                <select name="currency" id="currency" class="dropdown">
+                                    <option name="default" value="default">Default</option>
+                                    <option name="AZN" value="AZN">AZN</option>
+                                    <option name="USD" value="USD">USD</option>
+                                    <option name="RUB" value="RUB">RUB</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col col-md-auto">
+                            {{ form.submit(class="btn btn-outline-info") }}
+                        </div>
+                    </form>
+                </div>
             <div>
-                <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
-                    <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off" name="tapaz">
-                    <label for="btncheck1">tap.az</label><br>
-
-                    <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off" name="aliexpress">
-                    <label for="btncheck2">aliexpress.com</label><br>
-
-                    <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off" name="amazon">
-                    <label for="btncheck3">amazon.com</label><br>
+                <label class='float-none text-body'>
+                    {% if products_api != {} %}
+                        Found {{ products_api['details']['total_num'] }} items in {{ products_api['details']['exec_time'] }} seconds
+                    {% else %}
+                        Try to search something
+                    {% endif %}
+                </label>
+            </div>
+            <div class="container-horizontally">
+                <div>
+                    <div class="container website-content">
+                        <h3 style="display: inline-block">tap.az</h3>
+                        <div>
+                            <label class='float-none text-body'>
+                                {% if products_api['tapaz']['details'] %}
+                                    Found {{ products_api['tapaz']['details']['total_num'] }} items in {{ products_api['tapaz']['details']['exec_time'] }} seconds
+                                {% endif %}
+                            </label>
+                        </div>
+                    </div>>
+                    {% for product in products_api['tapaz']['data'] %}
+                        <article class="media content-section">
+                            <div class="media-body">
+                                <div>
+                                    <h4><a class="article-title" href={{ product['url'] }}>{{ product['title'] }}</a></h4>
+                                    <small class="float-none text-muted">from {{ product['short_url'] }}</small>
+                                </div>
+                                <div>
+                                    <h5 class="float-left font-weight-bold price-title">Price: {{ product['price_val'] }} {{ product['price_curr'] }}</h5>
+                                    <h5 class="float-right rating-title">Rating: {{ product['rating'] }}</h5>
+                                </div>
+                            </div>
+                        </article>
+                    {% else %}
+                        <div>No item matched with given options</div>
+                    {% endfor %}
+                </div>
+                <div>
+                    <div class="container website-content">
+                        <h3 style="display: inline-block">amazon.com</h3>
+                        <div>
+                            <label class='float-none text-body'>
+                                {% if products_api['amazon']['details'] %}
+                                    Found {{ products_api['amazon']['details']['total_num'] }} items in {{ products_api['amazon']['details']['exec_time'] }} seconds
+                                {% endif %}
+                            </label>
+                        </div>
+                    </div>>
+                    {% for product in products_api['amazon']['data'] %}
+                        <article class="media content-section">
+                            <div class="media-body">
+                                <div>
+                                    <h4><a class="article-title" href={{ product['url'] }}>{{ product['title'] }}</a></h4>
+                                    <small class="float-none text-muted">from {{ product['short_url'] }}</small>
+                                </div>
+                                <div>
+                                    <h5 class="float-left font-weight-bold price-title">Price: {{ product['price_val'] }} {{ product['price_curr'] }}</h5>
+                                    <h5 class="float-right rating-title">Rating: {{ product['rating'] }}</h5>
+                                </div>
+                            </div>
+                        </article>
+                    {% else %}
+                        <div>No item matched with given options</div>
+                    {% endfor %}
+                </div>
+                <div>
+                    <div class="container website-content   ">
+                        <h3 style="display: inline-block">aliexpress.com</h3>
+                        <div>
+                            <label class='float-none text-body'>
+                                {% if products_api['aliexpress']['details'] %}
+                                    Found {{ products_api['aliexpress']['details']['total_num'] }} items in {{ products_api['aliexpress']['details']['exec_time'] }} seconds
+                                {% endif %}
+                            </label>
+                        </div>
+                    </div>>
+                    {% for product in products_api['aliexpress']['data'] %}
+                        <article class="media content-section">
+                            <div class="media-body">
+                                <div>
+                                    <h4><a class="article-title" href={{ product['url'] }}>{{ product['title'] }}</a></h4>
+                                    <small class="float-none text-muted">from {{ product['short_url'] }}</small>
+                                </div>
+                                <div>
+                                    <h5 class="float-left font-weight-bold price-title">Price: {{ product['price_val'] }} {{ product['price_curr'] }}</h5>
+                                    <h5 class="float-right rating-title">Rating: {{ product['rating'] }}</h5>
+                                </div>
+                            </div>
+                        </article>
+                    {% else %}
+                        <div>No item matched with given options</div>
+                    {% endfor %}
                 </div>
             </div>
-            <div class="row">
-                <div class="dropdown">
-                    <label for="sort_pr">Sort by price:</label>
-                    <select name="sort_pr" id="sort_pr" class="dropdown">
-                        <option name="default" value="default">Default</option>
-                        <option name="ascending" value="ascending">Ascending</option>
-                        <option name="descending" value="descending">Descending</option>
-                    </select>
-                </div>
-                <div class="dropdown">
-                    <label for="sort_rat">Sort by rating:</label>
-                    <select name="sort_rat" id="sort_rat" class="dropdown">
-                        <option name="default" value="default">Default</option>
-                        <option name="ascending" value="ascending">Ascending</option>
-                        <option name="descending" value="descending">Descending</option>
-                    </select>
-                </div>
-                <div class="dropdown">
-                    <label for="currency">Currency:</label>
-                    <select name="currency" id="currency" class="dropdown">
-                        <option name="default" value="default">Default</option>
-                        <option name="AZN" value="AZN">AZN</option>
-                        <option name="USD" value="USD">USD</option>
-                        <option name="RUB" value="RUB">RUB</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group col col-md-auto">
-                {{ form.submit(class="btn btn-outline-info") }}
-            </div>
-        </form>
-    </div>
-    <div>
-        <label class='float-none text-body'>
-            {% if products_api != {} %}
-                Found {{ products_api['details']['total_num'] }} items in {{ products_api['details']['exec_time'] }} seconds
-            {% else %}
-                Try to search something
-            {% endif %}
-        </label>
-    </div>
-    <div class="content-section">
-        {% for product in products_api['data'] %}
-            <article class="media content-section">
-                <div class="media-body">
-                    <div>
-                        <h4><a class="article-title" href={{ product['url'] }}>{{ product['title'] }}</a></h4>
-                        <small class="float-none text-muted">from {{ product['short_url'] }}</small>
-                    </div>
-                    <div>
-                        <h5 class="float-left font-weight-bold price-title">Price: {{ product['price_val'] }} {{ product['price_curr'] }}</h5>
-                        <h5 class="float-right rating-title">Rating: {{ product['rating'] }}</h5>
-                    </div>
-                </div>
-            </article>
-        {% else %}
-            <div>No such item</div>
-        {% endfor %}
-    </div>
-{% endblock content %}
 
-{% block sidebar %}
-    <div class="col-md-4">
-        <div class="content-section">
-            <h3>News</h3>
-            <p class='text-muted'>The list of supported e-commerce websites.</p>
-            <div><a href='https://www.amazon.com/'>amazon.com</a></div>
-            <div><a href="https://www.aliexpress.com/">aliexpress.com</a></div>
-            <div><a href="https://tap.az/">tap.az</a></div>
         </div>
     </div>
-{% endblock sidebar %}
+</main>
+
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>

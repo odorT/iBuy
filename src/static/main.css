@@ -130,3 +130,22 @@ a.article-title:hover {
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown:hover .dropbtn {background-color: #3e8e41;}
+
+.container-horizontally {
+  display: flex;                  /* establish flex container */
+  flex-direction: row;            /* default value; can be omitted */
+  flex-wrap: nowrap;              /* default value; can be omitted */
+  justify-content: space-between; /* switched from default (flex-start, see below) */
+  /*background-color: lightyellow;*/
+}
+.container-horizontally > div {
+  width: 33.33%;
+  height: 100px;
+  padding: 10px;
+  /*border: 2px dashed red;*/
+}
+
+.website-content {
+  background: #f3f2ba;
+  border: #333333;
+}
