@@ -20,8 +20,3 @@ class Driver:
         print('>> Quiting and closing the browser')
         self.driver.close()
         self.driver.quit()
-
-
-tapaz_driver = Driver(False)
-amazon_driver = Driver(False)
-# aliexpress_driver = Driver(False)

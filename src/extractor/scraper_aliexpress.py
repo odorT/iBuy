@@ -1,11 +1,11 @@
-from src.extractor.driver import aliexpress_driver
+from src.extractor.driver import Driver
 import time
 from bs4 import BeautifulSoup
 
 
 class Scrape:
     def __init__(self, item):
-        self.driver = aliexpress_driver.get_driver()
+        self.driver = Driver(headless=True).get_driver()
         self.url = 'https://www.aliexpress.com/wholesale?catId=0&SearchText=' + item.replace(' ', '+')
         self.clean_url = 'https://www.aliexpress.com/'
         self.product_api = {'data': []}

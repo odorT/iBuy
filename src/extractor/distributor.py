@@ -12,8 +12,8 @@ class Distributor:
 
         if 'tapaz' in self.websites:
             self.scraper1 = Scrape_tapaz(mode=mode, item=item, timeout=timeout, min_price=min_price,
-                                         max_price=max_price,
-                                         sort_option=sort_option, currency=currency)
+                                         max_price=max_price, sort_option=sort_option, currency=currency,
+                                         headless=True)
             tapaz_api = self.scraper1.get_api()
             self.full_api['data'] += tapaz_api['data']
             self.full_api['details'] = tapaz_api['details']

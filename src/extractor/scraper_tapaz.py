@@ -1,70 +1,20 @@
-from src.extractor.driver import tapaz_driver
+from src.extractor.driver import Driver
+from src.extractor.scraper import Scraper
 import time
 from bs4 import BeautifulSoup
 
-PRICE_MAX = 10000000000
 
-AZN_TO_USD = 0.59
-RUB_TO_USD = 0.013
-USD_TO_AZN = 1.70
-RUB_TO_AZN = 0.022
-USD_TO_RUB = 76.08
-AZN_TO_RUB = 44.75
-
-
-class Scrape_tapaz:
-    def __init__(self, item, mode='fast', timeout=0.4, min_price=None, max_price=None, sort_option=None, currency=None):
+class Scrape_tapaz(Scraper):
+    def __init__(self, item, mode='fast', timeout=0.4, min_price=None, max_price=None,
+                 sort_option=None, currency=None, headless=True):
+        super(Scrape_tapaz, self).__init__(currency, min_price, max_price, sort_option)
         self.item = item
         self.timeout = timeout
         self.mode = mode
-        self.min_price = 0 if min_price is None else min_price
-        self.max_price = PRICE_MAX if max_price is None else max_price
-        self.sort_option = None if sort_option == 'default' else sort_option
-        self.currency = None if currency == 'default' is None else currency
-        self.driver = tapaz_driver.get_driver()
+        self.driver = Driver(headless=headless).get_driver()
         self.url = 'https://tap.az/elanlar?&keywords=' + item.replace(' ', '+')
         self.clean_url = 'https://tap.az/'
-        self.product_api = {'data': []}
-
-    @staticmethod
-    def price_formatter(price_value):
-        if ' ' in price_value:
-            price_value = str(price_value).replace(' ', '')
-        if ',' in price_value:
-            price_value = price_value.replace(',', '.')
-        return float(price_value)
-
-    def with_sort_options(self, api):
-        api['data'] = sorted(api['data'], key=lambda x: x['price_val'], reverse=(self.sort_option == 'descending'))
-        return api
-
-    def with_price_limits(self, api):
-        api['data'] = filter(lambda x: self.max_price > x['price_val'] >= self.min_price, api['data'])
-        # api['data'] = [x for x in api['data'] if self.max_price > x['price_val'] > self.min_price]
-        return api
-
-    def with_currency(self, api):
-        for data in api['data']:
-            if self.currency == 'usd':
-                if data['price_curr'] == 'AZN':
-                    data['price_val'] = round(data['price_val'] * AZN_TO_USD, 2)
-                elif data['price_curr'] == 'RUB':
-                    data['price_val'] = round(data['price_val'] * RUB_TO_USD, 2)
-                data['price_curr'] = 'USD'
-            elif self.currency == 'azn':
-                if data['price_curr'] == 'USD':
-                    data['price_val'] = round(data['price_val'] * USD_TO_AZN, 2)
-                elif data['price_curr'] == 'RUB':
-                    data['price_val'] = round(data['price_val'] * RUB_TO_AZN, 2)
-                data['price_curr'] = 'AZN'
-            elif self.currency == 'rub':
-                if data['price_curr'] == 'USD':
-                    data['price_val'] = round(data['price_val'] * USD_TO_RUB, 2)
-                elif data['price_curr'] == 'AZN':
-                    data['price_val'] = round(data['price_val'] * AZN_TO_RUB, 2)
-                data['price_curr'] = 'RUB'
-
-        return api
+        self.product_api = {}
 
     def source_page_generator(self):
         self.driver.get(self.url)
@@ -100,6 +50,7 @@ class Scrape_tapaz:
 
         soup = BeautifulSoup(main_html, 'lxml')
         product_list = soup.select("div[class^=products-i]")
+        api = {'data': []}
 
         for item in product_list:
             for link in item.find_all('a', target='_blank', href=True):
@@ -109,7 +60,7 @@ class Scrape_tapaz:
                     price_value = self.price_formatter(link.find('span', class_='price-val').text)
                     price_curr = link.find('span', class_='price-cur').text
 
-                    self.product_api['data'].append({
+                    api['data'].append({
                         'title': title,
                         'price_val': price_value,
                         'price_curr': price_curr,
@@ -122,36 +73,21 @@ class Scrape_tapaz:
 
         time_end = time.time()
 
-        self.product_api.update({
+        api.update({
             'details': {
                 'exec_time': round((time_end - time_start), 2),
-                'total_num': len(self.product_api['data'])
+                'total_num': len(api['data'])
             }
         })
 
-        return self.product_api
+        return api
 
     def get_api(self):
         api = self.api_generator()
+        self.product_api = self.with_options(api)
 
-        if self.currency:
-            api = self.with_currency(api)
-        if self.min_price != 0 or self.max_price != PRICE_MAX:
-            api = self.with_price_limits(api)
-        if self.sort_option:
-            api = self.with_sort_options(api)
-
-        return api
-
-    def driver_close(self):
-        self.driver.stop_driver()
-
-    def printer(self):
-        # for i in self.product_api['data']:
-        #     print(f'Title : {i["title"]}, price : {i["price"]}')
-        # print(self.product_api['details']['exec_time'])
-        print(self.product_api)
+        return self.product_api
 
     def run(self):
-        self.api_generator()
-        self.printer()
+        api = self.get_api()
+        self.printer(api)
