@@ -3,15 +3,18 @@ from src.extractor.scraper import Scraper
 import time
 from bs4 import BeautifulSoup
 
+amazon_scraper = Driver(True)
+
 
 class Scrape_amazon(Scraper):
     def __init__(self, item, timeout=0.4, mode='fast', min_price=None, max_price=None,
-                 sort_option=None, currency=None, headless=True):
-        super(Scrape_amazon, self).__init__(currency, min_price, max_price, sort_option)
+                 sort_price_option=None, sort_rating_option=None, currency=None):
+        super(Scrape_amazon, self).__init__(currency=currency, min_price=min_price, max_price=max_price,
+                                            sort_price_option=sort_price_option, sort_rating_option=sort_rating_option)
         self.item = item
         self.timeout = timeout
         self.mode = mode
-        self.driver = Driver(headless=headless).get_driver()
+        self.driver = amazon_scraper.get_driver()
         self.url = 'https://www.amazon.com/s?k=' + self.item
         self.clean_url = 'https://www.amazon.com'
         self.product_api = {}
@@ -45,7 +48,7 @@ class Scrape_amazon(Scraper):
                 rating_over = str(rating).replace(' out of ', '/').replace(' stars', '').split('/')[1]
                 rating = str(rating_val) + '/' + rating_over
             except:
-                rating_val = None
+                rating_val = 0
                 rating_over = None
                 rating = None
 

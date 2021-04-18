@@ -3,15 +3,18 @@ from src.extractor.scraper import Scraper
 import time
 from bs4 import BeautifulSoup
 
+tapaz_scraper = Driver(True)
+
 
 class Scrape_tapaz(Scraper):
-    def __init__(self, item, mode='fast', timeout=0.4, min_price=None, max_price=None,
-                 sort_option=None, currency=None, headless=True):
-        super(Scrape_tapaz, self).__init__(currency, min_price, max_price, sort_option)
+    def __init__(self, item, timeout=0.4, mode='fast', min_price=None, max_price=None,
+                 sort_price_option=None, sort_rating_option=None, currency=None):
+        super(Scrape_tapaz, self).__init__(currency=currency, min_price=min_price, max_price=max_price,
+                                           sort_price_option=sort_price_option, sort_rating_option=sort_rating_option)
         self.item = item
         self.timeout = timeout
         self.mode = mode
-        self.driver = Driver(headless=headless).get_driver()
+        self.driver = tapaz_scraper.get_driver()
         self.url = 'https://tap.az/elanlar?&keywords=' + item.replace(' ', '+')
         self.clean_url = 'https://tap.az/'
         self.product_api = {}
@@ -40,7 +43,7 @@ class Scrape_tapaz(Scraper):
         return self.driver.page_source
 
     def api_generator(self):
-        time_start = time.time()    # to calculate overall execution time
+        time_start = time.time()  # to calculate overall execution time
 
         final_page = self.source_page_generator()
         start_string = '<div class="js-endless-container products endless-products">'
@@ -65,6 +68,8 @@ class Scrape_tapaz(Scraper):
                         'price_val': price_value,
                         'price_curr': price_curr,
                         'url': base_url,
+                        'rating_val': 0,
+                        'rating_over': None,
                         'rating': None,
                         'short_url': 'www.tap.az'
                     })

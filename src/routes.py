@@ -1,8 +1,6 @@
 from src import app
 from flask import render_template, url_for, flash, redirect, request
 from src.forms import RegistrationForm, LoginForm, SearchForm
-# from src.extractor.scraper_tapaz import Scrape_tapaz
-# from src.extractor.scraper_amazon import Scrape_amazon
 from src.extractor.distributor import Distributor
 
 
@@ -20,23 +18,26 @@ def about():
 @app.route("/search", methods=['GET', 'POST'])
 def search():
     form = SearchForm()
-    mode = 'fast'
     item = form.item.data
     min_price = form.min_price.data
     max_price = form.max_price.data
-    sort_option = None
+    sort_price_option = None
+    sort_rating_option = None
     currency = None
+    mode = 'fast'
     websites = [
         i
         for i in ['amazon', 'tapaz', 'aliexpress']
         if request.form.getlist(i) == ['on']
     ]
     if request.method == 'POST':
-        sort_option = request.form['sort']
+        sort_price_option = request.form['sort_pr']
+        sort_rating_option = request.form['sort_rat']
         currency = request.form['currency']
 
-    products_api = Distributor(websites=websites, mode=mode, item=item, timeout=0.4, min_price=min_price,
-                               max_price=max_price, sort_option=sort_option, currency=currency).get_apis()
+    products_api = Distributor(websites=websites, mode=mode, item=item, timeout=0.4,
+                               min_price=min_price, max_price=max_price, sort_price_option=sort_price_option,
+                               sort_rating_option=sort_rating_option, currency=currency).get_apis()
 
     return render_template('search.html', title='Search', form=form, products_api=products_api)
 

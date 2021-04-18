@@ -28,33 +28,41 @@
                     <label for="btncheck1">tap.az</label><br>
 
                     <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off" name="aliexpress">
-                    <label for="btncheck1">aliexpress.com</label><br>
+                    <label for="btncheck2">aliexpress.com</label><br>
 
                     <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off" name="amazon">
-                    <label for="btncheck1">amazon.com</label><br>
+                    <label for="btncheck3">amazon.com</label><br>
                 </div>
             </div>
             <div class="row">
-                <div class="form-group col col-md-auto">
-                    {{ form.submit(class="btn btn-outline-info") }}
-                </div>
                 <div class="dropdown">
-                    <label for="sort">Sort by price:</label>
-                    <select name="sort" id="sort" class="dropdown">
+                    <label for="sort_pr">Sort by price:</label>
+                    <select name="sort_pr" id="sort_pr" class="dropdown">
                         <option name="default" value="default">Default</option>
                         <option name="ascending" value="ascending">Ascending</option>
                         <option name="descending" value="descending">Descending</option>
                     </select>
                 </div>
-                <div>
+                <div class="dropdown">
+                    <label for="sort_rat">Sort by rating:</label>
+                    <select name="sort_rat" id="sort_rat" class="dropdown">
+                        <option name="default" value="default">Default</option>
+                        <option name="ascending" value="ascending">Ascending</option>
+                        <option name="descending" value="descending">Descending</option>
+                    </select>
+                </div>
+                <div class="dropdown">
                     <label for="currency">Currency:</label>
                     <select name="currency" id="currency" class="dropdown">
                         <option name="default" value="default">Default</option>
-                        <option name="azn" value="azn">AZN</option>
-                        <option name="usd" value="usd">USD</option>
-                        <option name="rub" value="rub">RUB</option>
+                        <option name="AZN" value="AZN">AZN</option>
+                        <option name="USD" value="USD">USD</option>
+                        <option name="RUB" value="RUB">RUB</option>
                     </select>
                 </div>
+            </div>
+            <div class="form-group col col-md-auto">
+                {{ form.submit(class="btn btn-outline-info") }}
             </div>
         </form>
     </div>
