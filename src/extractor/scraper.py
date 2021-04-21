@@ -10,7 +10,7 @@ AZN_TO_RUB = 44.75
 class Scraper:
     def __init__(self, currency, min_price, max_price, sort_price_option, sort_rating_option):
         self.PRICE_MAX = 10000000000
-        self.currency = None if currency == 'default' is None else currency
+        self.currency = None if currency == 'default' else currency
         self.min_price = 0 if min_price is None else min_price
         self.max_price = self.PRICE_MAX if max_price is None else max_price
         self.sort_price_option = None if sort_price_option == 'default' else sort_price_option

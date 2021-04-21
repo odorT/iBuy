@@ -23,6 +23,3 @@ class SearchForm(FlaskForm):
     min_price = FloatField('Minimum Price')
     max_price = FloatField('Maximum Price')
     submit = SubmitField('Find it!')
-
-    choices = ['Ascending sort', 'Descending sort']
-    menu_field = SelectField(u'Advanced search', choices=choices)

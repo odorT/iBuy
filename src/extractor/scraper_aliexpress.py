@@ -1,79 +1,93 @@
 from src.extractor.driver import Driver
+from src.extractor.scraper import Scraper
 import time
-from bs4 import BeautifulSoup
+import json
+import requests
+
+aliexpress_scraper = Driver(True)
 
 
-class Scrape:
-    def __init__(self, item):
-        self.driver = Driver(headless=True).get_driver()
-        self.url = 'https://www.aliexpress.com/wholesale?catId=0&SearchText=' + item.replace(' ', '+')
-        self.clean_url = 'https://www.aliexpress.com/'
-        self.product_api = {'data': []}
+class Scrape_aliexpress(Scraper):
+    def __init__(self, item, min_price=None, max_price=None, sort_price_option=None, sort_rating_option=None,
+                 currency=None):
+        super(Scrape_aliexpress, self).__init__(currency=currency, min_price=min_price, max_price=max_price,
+                                                sort_price_option=sort_price_option,
+                                                sort_rating_option=sort_rating_option)
         self.item = item
+        self.clean_url = 'https://www.aliexpress.com/item/'
+        self.product_api = {}
 
-    def source_page_generator(self):
-        self.driver.get(self.url)
-        try:
-            # for i in range(10):
-            popup_close_button = self.driver.find_element_by_xpath(f'./html/body/div[7]/div[2]/div/a')
-            popup_close_button.click()
-        except:
-            pass
+    def json_response_generator(self):
+        url = "https://ali-express1.p.rapidapi.com/search"
 
-        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        return self.driver.page_source
+        querystring = {"query": self.item, "page": "1"}
 
-    def api_generator(self):
-        time_start = time.time()  # to calculate overall execution time
+        headers = {
+            'x-rapidapi-key': "5f68165e2emshf9462f5483ad7bap17785ajsna20dfc08cf3a",
+            'x-rapidapi-host': "ali-express1.p.rapidapi.com"
+        }
 
-        final_page = self.source_page_generator()
-        start_string = '<div class="js-endless-container products endless-products">'
-        end_string = '<div class="pagination_loading">'
-        main_html = str(final_page)[str(final_page).find(start_string):]
-        main_html = main_html[:main_html.find(end_string)]
+        response = requests.request("GET", url, headers=headers, params=querystring)
 
-        soup = BeautifulSoup(main_html, 'lxml')
-        product_list = soup.select("div[class^=products-i]")
+        with open("json_responses.txt", "a") as json_file:
+            json_file.write(str(response.text))
+            json_file.write('\nNew request\n')
 
-        for item in product_list:
-            for link in item.find_all('a', target='_blank', href=True):
-                try:
-                    base_url = self.clean_url + link['href']
-                    title = link.find('div', class_='products-name').text
-                    price = link.find('span', class_='price-val').text + link.find('span', class_='price-cur').text
-                except:
-                    base_url = None
-                    title = None
-                    price = None
+        return json.loads(str(response.text))
 
-                self.product_api['data'].append({
-                    'title': title,
-                    'price': price,
-                    'url': base_url,
-                    'rating': None,
-                    'short_url': 'www.tap.az'
-                })
+    def api_generator_from_response(self):
+        time_start = time.time()
+
+        response = self.json_response_generator()
+
+        item_list = response['data']['searchResult']['mods']['itemList']['content']
+        api = {'data': []}
+
+        for item in item_list:
+            title = item['title']['displayTitle']
+            price_value = item['prices']['sale_price']['minPrice']
+            price_curr = item['prices']['sale_price']['currencyCode']
+            product_id = item['productId']
+
+            try:
+                shipping = item['logistics']['logisticsDesc']
+                rating_val = item['evaluation']['starRating']
+                rating = str(rating_val) + '/5'
+            except:
+                shipping = None
+                rating_val = None
+                rating = None
+
+            api['data'].append({
+                'title': title,
+                'price_val': price_value,
+                'price_curr': price_curr,
+                'url': self.clean_url + str(product_id) + '.html',
+                'rating_val': rating_val,
+                'rating_over': 5,
+                'rating': rating,
+                'shipping': shipping,
+                'short_url': 'www.aliexpress.com'
+            })
 
         time_end = time.time()
 
-        self.product_api.update({
+        api.update({
             'details': {
                 'exec_time': round((time_end - time_start), 2),
-                'total_num': len(self.product_api['data'])
+                'total_num': len(api['data'])
             }
         })
 
+        print(api)
+        return api
+
+    def get_api(self):
+        api = self.api_generator_from_response()
+        self.product_api = self.with_options(api)
+
         return self.product_api
 
-    def driver_close(self):
-        self.driver.close()
-        self.driver.quit()
-
-    def printer(self):
-        for i in self.product_api['data']:
-            print(f'Title : {i["title"]}, price : {i["price"]}')
-        print(self.product_api['details']['exec_time'])
-
     def run(self):
-        self.source_page_generator()
-        # self.printer()
+        api = self.get_api()
+        self.printer(api)
