@@ -2,17 +2,24 @@ from src.extractor.driver import Driver
 from src.extractor.scraper import Scraper
 import time
 import json
+import os
+from os.path import join, dirname
+from dotenv import load_dotenv
 import requests
 
 aliexpress_scraper = Driver(True)
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
 
 
 class Scrape_aliexpress(Scraper):
     def __init__(self, item, min_price=None, max_price=None, sort_price_option=None, sort_rating_option=None,
-                 currency=None):
+                 currency=None, mode='fast', timeout=0.4):
         super(Scrape_aliexpress, self).__init__(currency=currency, min_price=min_price, max_price=max_price,
                                                 sort_price_option=sort_price_option,
                                                 sort_rating_option=sort_rating_option)
+        self.timeout = timeout
+        self.mode = mode
         self.item = item
         self.clean_url = 'https://www.aliexpress.com/item/'
         self.product_api = {}
@@ -23,8 +30,8 @@ class Scrape_aliexpress(Scraper):
         querystring = {"query": self.item, "page": "1"}
 
         headers = {
-            'x-rapidapi-key': "5f68165e2emshf9462f5483ad7bap17785ajsna20dfc08cf3a",
-            'x-rapidapi-host': "ali-express1.p.rapidapi.com"
+            'x-rapidapi-key': os.environ.get("x-rapidapi-key"),
+            'x-rapidapi-host': os.environ.get("x-rapidapi-host")
         }
 
         response = requests.request("GET", url, headers=headers, params=querystring)
