@@ -7,24 +7,14 @@ USD_TO_RUB = 76.08
 AZN_TO_RUB = 44.75
 
 
-class Scraper:
-    def __init__(self, currency, min_price, max_price, sort_price_option, sort_rating_option):
+class Filter:
+    def __init__(self, **kwargs):
         self.PRICE_MAX = 10000000000
-        self.currency = None if currency == 'default' else currency
-        self.min_price = 0 if min_price is None else min_price
-        self.max_price = self.PRICE_MAX if max_price is None else max_price
-        self.sort_price_option = None if sort_price_option == 'default' else sort_price_option
-        self.sort_rating_option = None if sort_rating_option == 'default' else sort_rating_option
-
-    @staticmethod
-    def price_formatter(price_value):
-        if ' ' in price_value:
-            price_value = str(price_value).replace(' ', '')
-        if ',' in price_value:
-            price_value = price_value.replace(',', '')
-        if '$' in price_value:
-            price_value = price_value.replace('$', '')
-        return float(price_value)
+        self.currency = None if kwargs['currency'] == 'default' else kwargs['currency']
+        self.min_price = 0 if kwargs['min_price'] is None else kwargs['min_price']
+        self.max_price = self.PRICE_MAX if kwargs['max_price'] is None else kwargs['max_price']
+        self.sort_price_option = None if kwargs['sort_price_option'] == 'default' else kwargs['sort_price_option']
+        self.sort_rating_option = None if kwargs['sort_rating_option'] == 'default' else kwargs['sort_rating_option']
 
     def with_currency(self, api):
         for data in api['data']:
@@ -73,11 +63,3 @@ class Scraper:
             api = self.with_sort_rating_options(api)
 
         return api
-
-    @staticmethod
-    def printer(api):
-        for i in api['data']:
-            print(f'Title: {i["title"]}')
-            print(f'Price: {i["price_val"]}')
-            print(f'Rating: {i["rating"]}')
-            print('\n\n')

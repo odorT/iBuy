@@ -1,7 +1,7 @@
 from src import app
 from flask import render_template, url_for, flash, redirect, request
 from src.forms import RegistrationForm, LoginForm, SearchForm
-from src.extractor.distributor import Distributor
+from src.extractor import distributor
 
 
 @app.route("/")
@@ -35,9 +35,9 @@ def search():
         sort_rating_option = request.form['sort_rat']
         currency = request.form['currency']
 
-    products_api = Distributor(websites=websites, mode=mode, item=item, timeout=0.4,
+    products_api = distributor(websites=websites, mode=mode, item=item, timeout=0.4,
                                min_price=min_price, max_price=max_price, sort_price_option=sort_price_option,
-                               sort_rating_option=sort_rating_option, currency=currency).get_apis()
+                               sort_rating_option=sort_rating_option, currency=currency)
 
     return render_template('search.html', title='Search', form=form, products_api=products_api)
 

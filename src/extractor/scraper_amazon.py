@@ -1,43 +1,33 @@
-from src.extractor.driver import Driver
-from src.extractor.scraper import Scraper
+from src.extractor.driver import amazon_driver
+from src.extractor.scrape import Scraper
 import time
 from bs4 import BeautifulSoup
 
-amazon_scraper = Driver(True)
-
 
 class Scrape_amazon(Scraper):
-    def __init__(self, item, timeout=0.4, mode='fast', min_price=None, max_price=None,
-                 sort_price_option=None, sort_rating_option=None, currency=None):
-        super(Scrape_amazon, self).__init__(currency=currency, min_price=min_price, max_price=max_price,
-                                            sort_price_option=sort_price_option, sort_rating_option=sort_rating_option)
-        self.item = item
-        self.timeout = timeout
-        self.mode = mode
-        self.driver = amazon_scraper.get_driver()
+    def __init__(self, **kwargs):
+        self.item = kwargs['item']
+        self.driver = amazon_driver.get_driver()
         self.url = 'https://www.amazon.com/s?k=' + self.item
-        self.clean_url = 'https://www.amazon.com'
         self.product_api = {}
 
-    def source_page_generator(self):
-        # if self.mode == 'fast':
-        #     for page in range(4):
-        #         url = self.url + '&page=' + str(page)
-        pass
-
-    def api_generator(self):
-        time_start = time.time()
+    def get_data(self):
+        global time_start
+        time_start = time.time() # for calculating the overall execution time of scraping
 
         self.driver.get(self.url)
 
-        soup = BeautifulSoup(self.driver.page_source, 'lxml')
+        return self.driver.page_source
+
+    def api_generator(self, page_data):
+        soup = BeautifulSoup(page_data, 'lxml')
         results = soup.find_all('div', {'data-component-type': 's-search-result'})
         api = {'data': []}
 
         for item in results:
             try:
                 title = item.find('span', class_='a-size-medium a-color-base a-text-normal').text
-                base_url = self.clean_url + item.find('a', class_='a-link-normal a-text-normal')['href']
+                base_url = 'https://www.amazon.com' + item.find('a', class_='a-link-normal a-text-normal')['href']
                 price_val = self.price_formatter(item.find('span', class_='a-offscreen').text)
                 price_curr = 'USD'
             except:
@@ -60,6 +50,7 @@ class Scrape_amazon(Scraper):
                 'rating_val': rating_val,
                 'rating_over': rating_over,
                 'rating': rating,
+                'shipping': None,
                 'short_url': 'www.amazon.com'
             })
 
@@ -75,11 +66,7 @@ class Scrape_amazon(Scraper):
         return api
 
     def get_api(self):
-        api = self.api_generator()
-        self.product_api = self.with_options(api)
+        page_data = self.get_data()
+        self.product_api = self.api_generator(page_data=page_data)
 
         return self.product_api
-
-    def run(self):
-        api = self.get_api()
-        self.printer(api)

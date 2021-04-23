@@ -1,25 +1,22 @@
-from src.extractor.driver import Driver
-from src.extractor.scraper import Scraper
+from src.extractor.driver import tapaz_driver
+from src.extractor.scrape import Scraper
 import time
 from bs4 import BeautifulSoup
 
-tapaz_scraper = Driver(True)
-
 
 class Scrape_tapaz(Scraper):
-    def __init__(self, item, timeout=0.4, mode='fast', min_price=None, max_price=None,
-                 sort_price_option=None, sort_rating_option=None, currency=None):
-        super(Scrape_tapaz, self).__init__(currency=currency, min_price=min_price, max_price=max_price,
-                                           sort_price_option=sort_price_option, sort_rating_option=sort_rating_option)
-        self.item = item
-        self.timeout = timeout
-        self.mode = mode
-        self.driver = tapaz_scraper.get_driver()
-        self.url = 'https://tap.az/elanlar?&keywords=' + item.replace(' ', '+')
-        self.clean_url = 'https://tap.az/'
+    def __init__(self, **kwargs):
+        self.item = kwargs['item']
+        self.timeout = kwargs['timeout']
+        self.mode = kwargs['mode']
+        self.driver = tapaz_driver.get_driver()
+        self.url = 'https://tap.az/elanlar?&keywords=' + self.item.replace(' ', '+')
         self.product_api = {}
 
-    def source_page_generator(self):
+    def get_data(self):
+        global time_start
+        time_start = time.time()
+
         self.driver.get(self.url)
 
         if self.mode == 'fast':
@@ -42,10 +39,8 @@ class Scrape_tapaz(Scraper):
 
         return self.driver.page_source
 
-    def api_generator(self):
-        time_start = time.time()  # to calculate overall execution time
-
-        final_page = self.source_page_generator()
+    def api_generator(self, page_data):
+        final_page = page_data
         start_string = '<div class="js-endless-container products endless-products">'
         end_string = '<div class="pagination_loading">'
         main_html = str(final_page)[str(final_page).find(start_string):]
@@ -58,7 +53,7 @@ class Scrape_tapaz(Scraper):
         for item in product_list:
             for link in item.find_all('a', target='_blank', href=True):
                 try:
-                    base_url = self.clean_url + link['href']
+                    base_url = 'https://tap.az/' + link['href']
                     title = link.find('div', class_='products-name').text
                     price_value = self.price_formatter(link.find('span', class_='price-val').text)
                     price_curr = link.find('span', class_='price-cur').text
@@ -71,6 +66,7 @@ class Scrape_tapaz(Scraper):
                         'rating_val': 0,
                         'rating_over': None,
                         'rating': None,
+                        'shipping': None,
                         'short_url': 'www.tap.az'
                     })
                 except:
@@ -88,11 +84,7 @@ class Scrape_tapaz(Scraper):
         return api
 
     def get_api(self):
-        api = self.api_generator()
-        self.product_api = self.with_options(api)
+        page_data = self.get_data()
+        self.product_api = self.api_generator(page_data=page_data)
 
         return self.product_api
-
-    def run(self):
-        api = self.get_api()
-        self.printer(api)
