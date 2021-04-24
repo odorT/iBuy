@@ -23,15 +23,15 @@ class Scrape_aliexpress(Scraper):
         querystring = {"name": self.item, "page": "1"}
 
         headers = {
-            'x-rapidapi-key': os.environ.get("x-rapidapi-key"),
-            'x-rapidapi-host': os.environ.get("x-rapidapi-host-500-mo")
+            'x-rapidapi-key': os.environ.get("X-RAPIDAPI-KEY"),
+            'x-rapidapi-host': os.environ.get("X-RAPIDAPI-HOST-500-MO")
         }
 
         response = requests.request("GET", api_source, headers=headers, params=querystring)
 
-        with open("json_responses.txt", "a") as json_file:
-            json_file.write(str(response.text))
-            json_file.write('\nNew request\n')
+        # with open("json_responses.txt", "a") as json_file:
+        #     json_file.write(str(response.text))
+        #     json_file.write('\nNew request\n')
 
         return json.loads(str(response.text))
 
