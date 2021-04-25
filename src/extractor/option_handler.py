@@ -1,3 +1,4 @@
+import abc
 
 AZN_TO_USD = 0.59
 RUB_TO_USD = 0.013
@@ -63,3 +64,11 @@ class Filter:
             api = self.with_sort_rating_options(api)
 
         return api
+
+
+class Sort:
+    pass
+
+
+class Options():
+    pass

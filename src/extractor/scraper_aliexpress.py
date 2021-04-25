@@ -23,8 +23,8 @@ class Scrape_aliexpress(Scraper):
         querystring = {"name": self.item, "page": "1"}
 
         headers = {
-            'x-rapidapi-key': os.environ.get("X-RAPIDAPI-KEY"),
-            'x-rapidapi-host': os.environ.get("X-RAPIDAPI-HOST-500-MO")
+            'x-rapidapi-key': os.environ.get("X_RAPIDAPI_KEY"),
+            'x-rapidapi-host': os.environ.get("X_RAPIDAPI_HOST_500_MO")
         }
 
         response = requests.request("GET", api_source, headers=headers, params=querystring)

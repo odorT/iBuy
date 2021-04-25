@@ -2,7 +2,7 @@ from src.extractor.scrape import Scraper
 from src.extractor.scraper_tapaz import Scrape_tapaz
 from src.extractor.scraper_amazon import Scrape_amazon
 from src.extractor.scraper_aliexpress import Scrape_aliexpress
-from src.extractor.filter import Filter
+from src.extractor.option_handler import Filter
 import time
 
 
