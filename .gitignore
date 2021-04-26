@@ -1,1 +1,7 @@
 .env
+.Dockerfile
+.Vagrantfile
+Releases/iBuy_v1.0_linux.zip
+iBuy_v1.0_linux/
+Releases/iBuy_v1.0_windows.zip
+iBuy_v1.0_windows/
