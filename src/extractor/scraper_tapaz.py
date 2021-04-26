@@ -7,10 +7,11 @@ from bs4 import BeautifulSoup
 class Scrape_tapaz(Scraper):
     def __init__(self, **kwargs):
         self.item = kwargs['item']
-        self.timeout = kwargs['timeout']
         self.mode = kwargs['mode']
+        self.timeout = 0.4
         self.driver = tapaz_driver.get_driver()
         self.url = 'https://tap.az/elanlar?&keywords=' + self.item.replace(' ', '+')
+        self.short_url = 'www.tap.az'
         self.product_api = {}
 
     def get_data(self):
@@ -39,7 +40,7 @@ class Scrape_tapaz(Scraper):
 
         return self.driver.page_source
 
-    def api_generator(self, page_data):
+    def extract_data(self, page_data):
         final_page = page_data
         start_string = '<div class="js-endless-container products endless-products">'
         end_string = '<div class="pagination_loading">'
@@ -50,6 +51,11 @@ class Scrape_tapaz(Scraper):
         product_list = soup.select("div[class^=products-i]")
         api = {'data': []}
 
+        rating_val = '0'
+        rating_over = '5'
+        rating = None
+        shipping = None
+
         for item in product_list:
             for link in item.find_all('a', target='_blank', href=True):
                 try:
@@ -57,34 +63,20 @@ class Scrape_tapaz(Scraper):
                     title = link.find('div', class_='products-name').text
                     price_value = self.price_formatter(link.find('span', class_='price-val').text)
                     price_curr = link.find('span', class_='price-cur').text
-
-                    api['data'].append({
-                        'title': title,
-                        'price_val': price_value,
-                        'price_curr': price_curr,
-                        'url': base_url,
-                        'rating_val': 0,
-                        'rating_over': None,
-                        'rating': None,
-                        'shipping': None,
-                        'short_url': 'www.tap.az'
-                    })
                 except:
                     continue
 
-        time_end = time.time()
+                api['data'].append(self.construct_api(title=title, price_value=price_value, price_curr=price_curr,
+                                                      base_url=base_url, rating_val=rating_val, rating_over=rating_over,
+                                                      rating=rating, shipping=shipping, short_url=self.short_url))
 
-        api.update({
-            'details': {
-                'exec_time': round((time_end - time_start), 2),
-                'total_num': len(api['data'])
-            }
-        })
+        time_end = time.time()
+        self.update_details(api, time_start=time_start, time_end=time_end)
 
         return api
 
     def get_api(self):
         page_data = self.get_data()
-        self.product_api = self.api_generator(page_data=page_data)
+        self.product_api = self.extract_data(page_data=page_data)
 
         return self.product_api

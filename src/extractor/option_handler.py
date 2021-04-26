@@ -1,4 +1,3 @@
-import abc
 
 AZN_TO_USD = 0.59
 RUB_TO_USD = 0.013
@@ -8,7 +7,7 @@ USD_TO_RUB = 76.08
 AZN_TO_RUB = 44.75
 
 
-class Filter:
+class Options:
     def __init__(self, **kwargs):
         self.PRICE_MAX = 10000000000
         self.currency = None if kwargs['currency'] == 'default' else kwargs['currency']
@@ -16,6 +15,22 @@ class Filter:
         self.max_price = self.PRICE_MAX if kwargs['max_price'] is None else kwargs['max_price']
         self.sort_price_option = None if kwargs['sort_price_option'] == 'default' else kwargs['sort_price_option']
         self.sort_rating_option = None if kwargs['sort_rating_option'] == 'default' else kwargs['sort_rating_option']
+
+    def handle(self, scraper_data):
+
+        if self.currency:
+            scraper_data = Filter.with_currency(self, scraper_data)
+        if self.min_price != 0 or self.max_price != self.PRICE_MAX:
+            scraper_data = Filter.with_price_limits(self, scraper_data)
+        if self.sort_price_option:
+            scraper_data = Sort.with_sort_price_options(self, scraper_data)
+        elif self.sort_rating_option:
+            scraper_data = Sort.with_sort_rating_options(self, scraper_data)
+
+        return scraper_data
+
+
+class Filter(Options):
 
     def with_currency(self, api):
         for data in api['data']:
@@ -42,8 +57,10 @@ class Filter:
 
     def with_price_limits(self, api):
         api['data'] = filter(lambda x: self.max_price > x['price_val'] >= self.min_price, api['data'])
-        # api['data'] = [x for x in api['data'] if self.max_price > x['price_val'] > self.min_price]
         return api
+
+
+class Sort(Options):
 
     def with_sort_price_options(self, api):
         api['data'] = sorted(api['data'], key=lambda x: x['price_val'], reverse=(self.sort_price_option == 'descending'))
@@ -52,23 +69,3 @@ class Filter:
     def with_sort_rating_options(self, api):
         api['data'] = sorted(api['data'], key=lambda x: x['rating_val'], reverse=(self.sort_rating_option == 'descending'))
         return api
-
-    def with_options(self, api):
-        if self.currency:
-            api = self.with_currency(api)
-        if self.min_price != 0 or self.max_price != self.PRICE_MAX:
-            api = self.with_price_limits(api)
-        if self.sort_price_option:
-            api = self.with_sort_price_options(api)
-        elif self.sort_rating_option:
-            api = self.with_sort_rating_options(api)
-
-        return api
-
-
-class Sort:
-    pass
-
-
-class Options():
-    pass

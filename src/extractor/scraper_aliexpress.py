@@ -13,6 +13,7 @@ load_dotenv(dotenv_path)
 class Scrape_aliexpress(Scraper):
     def __init__(self, **kwargs):
         self.item = kwargs['item']
+        self.short_url = 'www.aliexpress.com'
         self.product_api = {}
 
     def get_data(self):
@@ -35,18 +36,17 @@ class Scrape_aliexpress(Scraper):
 
         return json.loads(str(response.text))
 
-    def api_generator(self, json_data):
-
-        response = json_data
-
+    def extract_data(self, response):
         item_list = response['docs']
         api = {'data': []}
+
+        rating_over = '5'
 
         for item in item_list:
             title = item['product_title']
             price_value = item['app_sale_price']
             price_curr = item['app_sale_price_currency']
-            url = item['product_detail_url']
+            base_url = item['product_detail_url']
 
             try:
                 shipping = item['metadata']['logistics']['logisticsDesc']
@@ -57,31 +57,16 @@ class Scrape_aliexpress(Scraper):
                 rating_val = 0
                 rating = None
 
-            api['data'].append({
-                'title': title,
-                'price_val': price_value,
-                'price_curr': price_curr,
-                'url': url,
-                'rating_val': rating_val,
-                'rating_over': 5,
-                'rating': rating,
-                'shipping': shipping,
-                'short_url': 'www.aliexpress.com'
-            })
-
+            api['data'].append(self.construct_api(title=title, price_value=price_value, price_curr=price_curr,
+                                                  base_url=base_url, rating_val=rating_val, rating_over=rating_over,
+                                                  rating=rating, shipping=shipping, short_url=self.short_url))
         time_end = time.time()
-
-        api.update({
-            'details': {
-                'exec_time': round((time_end - time_start), 2),
-                'total_num': len(api['data'])
-            }
-        })
+        self.update_details(api, time_start=time_start, time_end=time_end)
 
         return api
 
     def get_api(self):
         json_data = self.get_data()
-        self.product_api = self.api_generator(json_data=json_data)
+        self.product_api = self.extract_data(response=json_data)
 
         return self.product_api
