@@ -3,14 +3,14 @@ import abc
 
 class Scraper(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def get_data(self):
+    def _get_data(self):
         """
         method returns either a page source or json file full of information about the searched item
         """
         pass
 
     @abc.abstractmethod
-    def extract_data(self, page_data):
+    def _extract_data(self, page_data):
         """
         this method generates an api from searched item. No filtering is applied here
         :param page_data: page source(str) or json file
@@ -19,15 +19,24 @@ class Scraper(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def get_api(self):
+    def _get_api(self):
         """
         with this method you get the api
         :return: dict
         """
         pass
 
+    @abc.abstractmethod
+    def __call__(self, **kwargs):
+        """
+        Get the scraped data in structured form with this method
+        :param kwargs: search item, mode, etc.
+        :return: api dict
+        """
+        pass
+
     @staticmethod
-    def construct_api(**kwargs):
+    def _construct_api(**kwargs):
         """
         this method constructs one standard api structure with python dictionary for all child scraper classes.
         :param kwargs: api data value parameters
@@ -46,7 +55,7 @@ class Scraper(metaclass=abc.ABCMeta):
         }
 
     @staticmethod
-    def update_details(api, time_start, time_end):
+    def _update_details(api, time_start, time_end):
         """
         this method is used to update the api dict with details of:
         execution_time: time passed when getting data from website and constructing api
@@ -65,7 +74,7 @@ class Scraper(metaclass=abc.ABCMeta):
         return api
 
     @staticmethod
-    def price_formatter(price_value):
+    def _price_formatter(price_value):
         """
         this method cleans the price_value and returns pure float number
         :param price_value: string
@@ -80,7 +89,7 @@ class Scraper(metaclass=abc.ABCMeta):
         return float(price_value)
 
     @staticmethod
-    def printer(api):
+    def _printer(api):
         """
         this method prints 3 core parameters of scraped data. Use this method when debugging
         :param api: dict

@@ -7,7 +7,7 @@ USD_TO_RUB = 76.08
 AZN_TO_RUB = 44.75
 
 
-class Options:
+class OptionHandler:
     def __init__(self, **kwargs):
         self.PRICE_MAX = 10000000000
         self.currency = None if kwargs['currency'] == 'default' else kwargs['currency']
@@ -30,7 +30,7 @@ class Options:
         return scraper_data
 
 
-class Filter(Options):
+class Filter(OptionHandler):
 
     def with_currency(self, api):
         for data in api['data']:
@@ -60,7 +60,7 @@ class Filter(Options):
         return api
 
 
-class Sort(Options):
+class Sort(OptionHandler):
 
     def with_sort_price_options(self, api):
         api['data'] = sorted(api['data'], key=lambda x: x['price_val'], reverse=(self.sort_price_option == 'descending'))

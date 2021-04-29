@@ -38,7 +38,6 @@ def search():
     products_api = distributor(websites=websites, mode=mode, item=item, min_price=min_price, max_price=max_price,
                                sort_price_option=sort_price_option, sort_rating_option=sort_rating_option,
                                currency=currency)
-
     return render_template('search.html', title='Search', form=form, products_api=products_api)
 
 

@@ -5,16 +5,18 @@ from bs4 import BeautifulSoup
 
 
 class Scrape_tapaz(Scraper):
-    def __init__(self, **kwargs):
+    def __init__(self, timeout=0.4):
+        self.timeout = timeout
+        self.driver = tapaz_driver.get_driver()
+        self.short_url = 'www.tap.az'
+        self._product_api = {}
+
+    def __call__(self, **kwargs):
         self.item = kwargs['item']
         self.mode = kwargs['mode']
-        self.timeout = 0.4
-        self.driver = tapaz_driver.get_driver()
         self.url = 'https://tap.az/elanlar?&keywords=' + self.item.replace(' ', '+')
-        self.short_url = 'www.tap.az'
-        self.product_api = {}
 
-    def get_data(self):
+    def _get_data(self):
         global time_start
         time_start = time.time()
 
@@ -40,7 +42,7 @@ class Scrape_tapaz(Scraper):
 
         return self.driver.page_source
 
-    def extract_data(self, page_data):
+    def _extract_data(self, page_data):
         final_page = page_data
         start_string = '<div class="js-endless-container products endless-products">'
         end_string = '<div class="pagination_loading">'
@@ -61,22 +63,29 @@ class Scrape_tapaz(Scraper):
                 try:
                     base_url = 'https://tap.az/' + link['href']
                     title = link.find('div', class_='products-name').text
-                    price_value = self.price_formatter(link.find('span', class_='price-val').text)
+                    price_value = self._price_formatter(link.find('span', class_='price-val').text)
                     price_curr = link.find('span', class_='price-cur').text
                 except:
                     continue
 
-                api['data'].append(self.construct_api(title=title, price_value=price_value, price_curr=price_curr,
-                                                      base_url=base_url, rating_val=rating_val, rating_over=rating_over,
-                                                      rating=rating, shipping=shipping, short_url=self.short_url))
+                api['data'].append(
+                    self._construct_api(title=title, price_value=price_value, price_curr=price_curr, base_url=base_url,
+                                        rating_val=rating_val, rating_over=rating_over, rating=rating,
+                                        shipping=shipping, short_url=self.short_url))
 
         time_end = time.time()
-        self.update_details(api, time_start=time_start, time_end=time_end)
+        self._update_details(api, time_start=time_start, time_end=time_end)
 
         return api
 
-    def get_api(self):
-        page_data = self.get_data()
-        self.product_api = self.extract_data(page_data=page_data)
+    def _get_api(self):
+        page_data = self._get_data()
+        return self._extract_data(page_data=page_data)
 
-        return self.product_api
+    def __call__(self, **kwargs):
+        self.item = kwargs['item']
+        self.mode = kwargs['mode']
+        self.url = 'https://tap.az/elanlar?&keywords=' + self.item.replace(' ', '+')
+        self._product_api = self._get_api()
+
+        return self._product_api

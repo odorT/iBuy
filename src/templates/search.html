@@ -195,7 +195,13 @@
                                     <h5 class="float-left font-weight-bold price-title">Price: {{ product['price_val'] }} {{ product['price_curr'] }}</h5>
                                     <h5 class="float-right rating-title">Rating: {{ product['rating'] }}</h5>
                                 </div>
+                                <div>
+                                    {% if product['shipping'] %}
+                                        <h5 class="float-left">{{ product['shipping'] }}</h5>
+                                    {% endif %}
+                                </div>
                             </div>
+
                         </article>
                     {% else %}
                         <div>No item matched with given options</div>

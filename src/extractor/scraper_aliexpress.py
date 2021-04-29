@@ -11,12 +11,11 @@ load_dotenv(dotenv_path)
 
 
 class Scrape_aliexpress(Scraper):
-    def __init__(self, **kwargs):
-        self.item = kwargs['item']
+    def __init__(self):
         self.short_url = 'www.aliexpress.com'
-        self.product_api = {}
+        self._product_api = {}
 
-    def get_data(self):
+    def _get_data(self):
         global time_start
         time_start = time.time()
         api_source = "https://magic-aliexpress1.p.rapidapi.com/api/products/search"
@@ -36,7 +35,7 @@ class Scrape_aliexpress(Scraper):
 
         return json.loads(str(response.text))
 
-    def extract_data(self, response):
+    def _extract_data(self, response):
         item_list = response['docs']
         api = {'data': []}
 
@@ -57,16 +56,21 @@ class Scrape_aliexpress(Scraper):
                 rating_val = 0
                 rating = None
 
-            api['data'].append(self.construct_api(title=title, price_value=price_value, price_curr=price_curr,
-                                                  base_url=base_url, rating_val=rating_val, rating_over=rating_over,
-                                                  rating=rating, shipping=shipping, short_url=self.short_url))
+            api['data'].append(
+                self._construct_api(title=title, price_value=price_value, price_curr=price_curr, base_url=base_url,
+                                    rating_val=rating_val, rating_over=rating_over, rating=rating, shipping=shipping,
+                                    short_url=self.short_url))
         time_end = time.time()
-        self.update_details(api, time_start=time_start, time_end=time_end)
+        self._update_details(api, time_start=time_start, time_end=time_end)
 
         return api
 
-    def get_api(self):
-        json_data = self.get_data()
-        self.product_api = self.extract_data(response=json_data)
+    def _get_api(self):
+        json_data = self._get_data()
+        return self._extract_data(json_data)
 
-        return self.product_api
+    def __call__(self, **kwargs):
+        self.item = kwargs['item']
+        self._product_api = self._get_api()
+
+        return self._product_api
