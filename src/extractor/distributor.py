@@ -23,7 +23,8 @@ class Distributor:
             if website in self._websites:
                 scraped_data = iterscraper(item=kwargs['item'], mode=kwargs['mode'])
                 options: OptionHandler = OptionHandler(currency=kwargs['currency'], min_price=kwargs['min_price'],
-                                                       max_price=kwargs['max_price'], sort_price_option=kwargs['sort_price_option'],
+                                                       max_price=kwargs['max_price'],
+                                                       sort_price_option=kwargs['sort_price_option'],
                                                        sort_rating_option=kwargs['sort_rating_option'])
                 handled = options.handle(scraped_data)
 

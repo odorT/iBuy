@@ -10,10 +10,6 @@ class Scrape_amazon(Scraper):
         self.short_url = 'www.amazon.com'
         self._product_api = {}
 
-    def __call__(self, **kwargs):
-        self.item = kwargs['item']
-        self.url = 'https://www.amazon.com/s?k=' + self.item
-
     def _get_data(self):
         global time_start
         time_start = time.time()  # for calculating the overall execution time of scraping

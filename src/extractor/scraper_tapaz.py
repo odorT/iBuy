@@ -11,11 +11,6 @@ class Scrape_tapaz(Scraper):
         self.short_url = 'www.tap.az'
         self._product_api = {}
 
-    def __call__(self, **kwargs):
-        self.item = kwargs['item']
-        self.mode = kwargs['mode']
-        self.url = 'https://tap.az/elanlar?&keywords=' + self.item.replace(' ', '+')
-
     def _get_data(self):
         global time_start
         time_start = time.time()
