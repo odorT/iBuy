@@ -1,15 +1,27 @@
-from src.extractor.option_handler import OptionHandler
-from src.extractor.scraper_tapaz import Scrape_tapaz
-from src.extractor.scraper_amazon import Scrape_amazon
-from src.extractor.scraper_aliexpress import Scrape_aliexpress
+from src.extractor.option_handler import OptionHandlerInterface, OptionHandler, Sort, Filter
+from src.extractor.scrape import AbstractScraper, Scrape_aliexpress, Scrape_tapaz, Scrape_amazon
+from src.extractor.driver import Driver
 import time
+
+
+webdriver = Driver(False)
+
+amazon_scraper: AbstractScraper = Scrape_amazon(driver=webdriver)
+tapaz_scraper: AbstractScraper = Scrape_tapaz(driver=webdriver, timeout=0.4)
+aliexpress_scraper: AbstractScraper = Scrape_aliexpress()
+
+sorter: OptionHandlerInterface = Sort()
+filterer: OptionHandlerInterface = Filter()
 
 
 class Distributor:
     def __init__(self):
-        self._scraper_aliexpress = Scrape_aliexpress()
-        self._scraper_amazon = Scrape_amazon()
-        self._scraper_tapaz = Scrape_tapaz()
+        self._scraper_aliexpress = aliexpress_scraper
+        self._scraper_amazon = amazon_scraper
+        self._scraper_tapaz = tapaz_scraper
+        self._sorter = sorter
+        self._filterer = filterer
+
         self._possible_websites = {'tapaz': self._scraper_tapaz, 'amazon': self._scraper_amazon,
                                    'aliexpress': self._scraper_aliexpress}
         self._full_api = {'tapaz': {}, 'amazon': {}, 'aliexpress': {}}
@@ -22,11 +34,12 @@ class Distributor:
         for website, iterscraper in self._possible_websites.items():
             if website in self._websites:
                 scraped_data = iterscraper(item=kwargs['item'], mode=kwargs['mode'])
-                options: OptionHandler = OptionHandler(currency=kwargs['currency'], min_price=kwargs['min_price'],
-                                                       max_price=kwargs['max_price'],
-                                                       sort_price_option=kwargs['sort_price_option'],
-                                                       sort_rating_option=kwargs['sort_rating_option'])
-                handled = options.handle(scraped_data)
+
+                self._sorter.define_options(sort_price_option='ascending', sort_rating_option='default')
+                self._filterer.define_options(currency='AZN', min_price=12, max_price=1200)
+
+                handler: OptionHandler = OptionHandler(sort_handler=self._sorter, filter_handler=self._filterer)
+                handled = handler.operation(scraped_data)
 
                 self._full_api.update({website: handled})
                 total_product_num += handled['details']['total_num']
