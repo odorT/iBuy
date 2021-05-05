@@ -1,4 +1,4 @@
-from src.extractor.option_handler import OptionHandlerInterface, OptionHandler, Sort, Filter
+from src.extractor.option_handler import OptionHandlerInterface, OptionsHandler, Sort, Filter
 from src.extractor.scrape import AbstractScraper, Scrape_aliexpress, Scrape_tapaz, Scrape_amazon
 from src.extractor.driver import Driver
 import time
@@ -11,6 +11,7 @@ aliexpress_scraper = Scrape_aliexpress()
 
 sorter = Sort()
 filterer = Filter()
+handler = OptionsHandler(sort_handler=sorter, filter_handler=filterer)
 
 
 class DistributorOptions(object):
@@ -41,15 +42,17 @@ class DistributorOptions(object):
 
 
 class Distributor:
-    __filterer: OptionHandlerInterface
+    __filter: OptionHandlerInterface
     __sorter: OptionHandlerInterface
+    __handler: OptionsHandler
     __scraper_aliexpress: AbstractScraper
     __scraper_amazon: AbstractScraper
     __scraper_tapaz: AbstractScraper
 
     def __init__(self, options: DistributorOptions = None):
         self.__sorter = sorter
-        self.__filterer = filterer
+        self.__filter = filterer
+        self.__handler = handler
 
         if options:
             self.__argument_wrapper(options)
@@ -89,12 +92,12 @@ class Distributor:
         for website, iterscraper in self.__possible_websites.items():
             if website in self.__websites:
                 scraped_data = iterscraper(item=kwargs['item'], mode=kwargs['mode'])
+                self.__sorter.define_options(sort_price_option=kwargs['sort_price_option'],
+                                             sort_rating_option=kwargs['sort_rating_option'])
+                self.__filter.define_options(currency=kwargs['currency'], min_price=kwargs['min_price'],
+                                             max_price=kwargs['max_price'])
 
-                self.__sorter.define_options(sort_price_option='ascending', sort_rating_option='default')
-                self.__filterer.define_options(currency='AZN', min_price=12, max_price=1200)
-
-                handler: OptionHandler = OptionHandler(sort_handler=self.__sorter, filter_handler=self.__filterer)
-                handled = handler.operation(scraped_data)
+                handled = self.__handler.operation(scraped_data)
 
                 self.__full_api.update({website: handled})
                 total_product_num += handled['details']['total_num']

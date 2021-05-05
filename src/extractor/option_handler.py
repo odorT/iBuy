@@ -1,14 +1,17 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 
+
 AZN_TO_USD = 0.59
+RUB_TO_USD = 0.013
 USD_TO_AZN = 1.70
+RUB_TO_AZN = 0.022
 USD_TO_RUB = 76.08
 AZN_TO_RUB = 44.75
 
 
-class OptionHandler:
-    def __init__(self, filter_handler: OptionHandlerInterface, sort_handler: OptionHandlerInterface) -> None:
+class OptionsHandler:
+    def __init__(self, filter_handler: OptionHandlerInterface, sort_handler: OptionHandlerInterface):
         self.filter_handler = filter_handler
         self.sort_handler = sort_handler
 
@@ -36,7 +39,7 @@ class Filter(OptionHandlerInterface):
 
     def define_options(self, **kwargs):
         self.currency = None if kwargs['currency'] == 'default' else kwargs['currency']
-        self.min_price = self.PRICE_MIN if kwargs['min_price'] is None else kwargs['min_price']
+        self.min_price = self.PRICE_MIN if kwargs['min_price'] is None or kwargs['min_price'] < self.PRICE_MIN else kwargs['min_price']
         self.max_price = self.PRICE_MAX if kwargs['max_price'] is None else kwargs['max_price']
 
     def with_currency(self, api):
@@ -44,16 +47,28 @@ class Filter(OptionHandlerInterface):
             if self.currency == 'USD':
                 if data['price_curr'] == 'AZN':
                     data['price_val'] = round(data['price_val'] * AZN_TO_USD, 2)
+                elif data['price_curr'] == 'RUB':
+                    data['price_val'] = round(data['price_val'] * RUB_TO_USD, 2)
                 data['price_curr'] = 'USD'
             elif self.currency == 'AZN':
                 if data['price_curr'] == 'USD':
                     data['price_val'] = round(data['price_val'] * USD_TO_AZN, 2)
+                elif data['price_curr'] == 'RUB':
+                    data['price_val'] = round(data['price_val'] * RUB_TO_AZN, 2)
                 data['price_curr'] = 'AZN'
+            elif self.currency == 'RUB':
+                if data['price_curr'] == 'USD':
+                    data['price_val'] = round(data['price_val'] * USD_TO_RUB, 2)
+                elif data['price_curr'] == 'AZN':
+                    data['price_val'] = round(data['price_val'] * AZN_TO_RUB, 2)
+                data['price_curr'] = 'RUB'
 
         return api
 
     def with_price_limits(self, api):
-        api['data'] = filter(lambda x: self.max_price > x['price_val'] >= self.min_price, api['data'])
+        # api['data'] = filter(lambda x: self.max_price > x['price_val'] >= self.min_price, api['data'])
+        api['data'] = [x for x in api['data'] if self.max_price > x['price_val'] >= self.min_price]
+
         return api
 
     def handle(self, scraped_data):
