@@ -14,9 +14,10 @@ load_dotenv(dotenv_path)
 
 class AbstractScraper(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def _get_data(self):
+    def _get_data(self, *args, **kwargs):
         """
         method returns either a page source or json file full of information about the searched item
+        :param *args: page_count
         """
         pass
 
@@ -117,7 +118,7 @@ class Scrape_aliexpress(AbstractScraper):
         self.short_url = 'www.aliexpress.com'
         self._product_api = {}
 
-    def _get_data(self):
+    def _get_data(self, *args):
         global time_start
         time_start = time.time()
         api_source = "https://magic-aliexpress1.p.rapidapi.com/api/products/search"
@@ -184,16 +185,32 @@ class Scrape_amazon(AbstractScraper):
         self.short_url = 'www.amazon.com'
         self._product_api = {}
 
-    def _get_data(self):
-        global time_start
-        time_start = time.time()  # for calculating the overall execution time of scraping
-
-        self.driver.get(self.url)
+    def _get_data(self, *args):
+        self.driver.get(self.url + "&page=" + str(args[0]))
 
         return self.driver.page_source
 
-    def _extract_data(self, page_data):
-        soup = BeautifulSoup(page_data, 'lxml')
+    @staticmethod
+    def find_page_count(soup):
+        page_count = 1
+        try:
+            page_count_area = soup.find_all("ul", class_="a-pagination")
+            for i in page_count_area:
+                number_area = i.text.strip()
+            page_count_nums = list(str(number_area).split('\n'))
+
+            for i in page_count_nums:
+                try:
+                    if int(i) > page_count:
+                        page_count = int(i)
+                except:
+                    continue
+        except:
+            pass
+
+        return page_count
+
+    def _extract_data(self, soup):
         results = soup.find_all('div', {'data-component-type': 's-search-result'})
         api = {'data': []}
 
@@ -221,17 +238,47 @@ class Scrape_amazon(AbstractScraper):
                 self._construct_api(title=title, price_value=price_value, price_curr=price_curr, base_url=base_url,
                                     rating_val=rating_val, rating_over=rating_over, rating=rating, shipping=shipping,
                                     short_url=self.short_url))
-        time_end = time.time()
-        self._update_details(api, time_start=time_start, time_end=time_end)
 
         return api
 
     def _get_api(self):
-        page_data = self._get_data()
-        return self._extract_data(page_data=page_data)
+        page_data = self._get_data(1)
+        soup = BeautifulSoup(page_data, 'lxml')
+        page_count = self.find_page_count(soup)
+        time_start = time.time()
+
+        if self.mode == '1' or page_count == 1:
+            temp_api = self._extract_data(soup)
+
+            time_end = time.time()
+            self._update_details(temp_api, time_start=time_start, time_end=time_end)
+            return temp_api
+
+        elif self.mode == '2':
+            temp_api = {'data': []}
+            for i in range(1, 6):
+                page_data = self._get_data(i)
+                soup = BeautifulSoup(page_data, 'lxml')
+                temp_api['data'].extend(self._extract_data(soup)['data'])
+
+            time_end = time.time()
+            self._update_details(temp_api, time_start=time_start, time_end=time_end)
+            return temp_api
+
+        elif self.mode == '3':
+            temp_api = {'data': []}
+            for i in range(1, page_count):
+                page_data = self._get_data(i)
+                soup = BeautifulSoup(page_data, 'lxml')
+                temp_api['data'].extend(self._extract_data(soup)['data'])
+
+            time_end = time.time()
+            self._update_details(temp_api, time_start=time_start, time_end=time_end)
+            return temp_api
 
     def __call__(self, **kwargs):
         self.item = kwargs['item']
+        self.mode = kwargs['mode']
         self.url = 'https://www.amazon.com/s?k=' + self.item
         self._product_api = self._get_api()
 
@@ -245,21 +292,21 @@ class Scrape_tapaz(AbstractScraper):
         self.short_url = 'www.tap.az'
         self._product_api = {}
 
-    def _get_data(self):
+    def _get_data(self, *args):
         global time_start
         time_start = time.time()
 
         self.driver.get(self.url)
 
-        if self.mode == 'fast':
+        if self.mode == '1':
             for _ in range(3):
                 self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 time.sleep(self.timeout)
-        elif self.mode == 'medium':
+        elif self.mode == '2':
             for _ in range(10):
                 self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 time.sleep(self.timeout)
-        elif self.mode == 'slow':
+        elif self.mode == '3':
             number_of_scrolls = 0
             reached_page_end = False
             last_height = self.driver.execute_script("return document.body.scrollHeight")

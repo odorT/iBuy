@@ -3,7 +3,7 @@ from src.extractor.scrape import AbstractScraper, Scrape_aliexpress, Scrape_tapa
 from src.extractor.driver import Driver
 import time
 
-webdriver = Driver(headless=True)
+webdriver = Driver(headless=False)
 
 amazon_scraper = Scrape_amazon(driver=webdriver)
 tapaz_scraper = Scrape_tapaz(driver=webdriver, timeout=0.4)
@@ -88,6 +88,7 @@ class Distributor:
         self.__websites: list = kwargs['websites']
         time_start = time.time()
         total_product_num = 0
+        self.__full_api = {'tapaz': {}, 'amazon': {}, 'aliexpress': {}}  # to make api empty after each request
 
         for website, iterscraper in self.__possible_websites.items():
             if website in self.__websites:

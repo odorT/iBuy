@@ -24,7 +24,7 @@ def search():
     sort_price_option = None
     sort_rating_option = None
     currency = None
-    mode = 'fast'
+    mode = None
     websites = [
         i
         for i in ['amazon', 'tapaz', 'aliexpress']
@@ -34,7 +34,7 @@ def search():
         sort_price_option = request.form['sort_pr']
         sort_rating_option = request.form['sort_rat']
         currency = request.form['currency']
-
+        mode = request.form['mode']
     products_api = distributor(websites=websites, mode=mode, item=item, min_price=min_price, max_price=max_price,
                                sort_price_option=sort_price_option, sort_rating_option=sort_rating_option,
                                currency=currency)
