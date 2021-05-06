@@ -1,25 +1,38 @@
-## **iBuy** is a multi-search engine for 3 (amazon.com, aliexpress.com, tap.az) e-commerce websites
-### Installation
+# **iBuy** is a multi-search engine for 3 (amazon.com, aliexpress.com, tap.az) e-commerce websites
+## Installation  
+You can run the application directly on host machine or with [Vagrant](https://www.vagrantup.com/)
 
+### To install on host machine
 #### Get the source code
 `git clone https://github.com/odorT/iBuy.git`
 
-### In order to prevent dependency version problems, create virtualenv and install dependencies under venv
+#### In order to prevent dependency version problems, create virtualenv and install dependencies under venv
 `python3 -m venv venv`  
 
-### For Windows
+#### For Windows
 `venv/Scripts/activate`  
-### For Linux
+#### For Linux
 `source venv/bin/activate`  
 
-### Install dependencies
+#### Install dependencies
 `pip3 install -r requirements.txt`  
 
-### Run the application
+#### Run the application
 `python3 application.py`  
 
-### After finishing deactivate the venv with
+#### After finishing deactivate the venv with
 `deactivate`
+
+### Vagrant  
+Clone the repository and cd into vagrant folder. To search aliexpress, you should have .env in /vagrant folder too. 
+Check Notes for more details about .env. To use this feature, you should have already installed virtualbox and
+[vagrant](https://www.vagrantup.com/downloads). **Note that Vagrant uses NFS and NFS is supported only in Linux. 
+To you nfs in windows, you can try vagrant-winnfsd plugin(which is not stable)**. Recommended to use in Linux OS.  
+Inside vagrant/ folder, run following command:  
+`vagrant up`
+
+This will automatically create new virtual machine in virtualbox and provision the application inside it.
+To access website hosted in VM, use `192.168.33.11:5000` or `localhost:5001`. You can change the ip address and port in Vagrantfile.
 
 ### Notes
 * iBuy only supports Chrome webbrowser, therefore you should have already installed Chrome to be able to run the application

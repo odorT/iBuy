@@ -1,5 +1,8 @@
 from src.extractor.option_handler import OptionHandlerInterface, OptionsHandler, Sort, Filter
-from src.extractor.scrape import AbstractScraper, Scrape_aliexpress, Scrape_tapaz, Scrape_amazon
+from src.extractor.scrape import AbstractScraper
+from src.extractor.scrape_aliexpress import Scrape_aliexpress
+from src.extractor.scrape_tapaz import Scrape_tapaz
+from src.extractor.scrape_amazon import Scrape_amazon
 from src.extractor.driver import Driver
 import time
 
@@ -112,6 +115,6 @@ class Distributor:
             }
         })
 
-        print(f'GET request: {kwargs}\nRESPONSE: {self.__full_api}')
+        print(f'GET request: {kwargs}')
 
         return self.__full_api
