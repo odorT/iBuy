@@ -3,7 +3,7 @@ from src.extractor.scrape import AbstractScraper, Scrape_aliexpress, Scrape_tapa
 from src.extractor.driver import Driver
 import time
 
-webdriver = Driver(headless=False)
+webdriver = Driver(headless=True)
 
 amazon_scraper = Scrape_amazon(driver=webdriver)
 tapaz_scraper = Scrape_tapaz(driver=webdriver, timeout=0.4)

@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver import ChromeOptions
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.utils import ChromeType
 
 
 # from selenium.webdriver.common.proxy import Proxy, ProxyType
@@ -22,7 +23,7 @@ class Driver(metaclass=Singleton):
         self.options.add_argument("--window-size=1600, 490")
         self.options.add_argument("--disable-infobars")
         self.options.headless = self.headless
-        self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.options)
+        self.driver = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.GOOGLE).install(), options=self.options)
         self.driver.implicitly_wait(30)
 
         # self.proxy = Proxy()

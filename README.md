@@ -30,5 +30,5 @@ Then copy the **X-RapidAPI-Key** from the website. Then you will need to create 
 X_RAPIDAPI_KEY=<YOUR PERSONAL RAPIDAPI KEY>
 X_RAPIDAPI_HOST_500_MO=magic-aliexpress1.p.rapidapi.com
 ```  
-Replace the <YOUR PERSONAL RAPIDAPI KEY> with the token that you copied before. After that just run the application.  
+Replace `<YOUR PERSONAL RAPIDAPI KEY>` with the token that you copied before. After that just run the application.  
 Or contact [odorlesstangerine@gmail.com](https://mail.google.com/mail/u/0/#inbox?compose=DmwnWrRlQhgRCFlmTNcPXNfFqhVfGsBSXZsjqMFNhsNBqdjtwMcwfKtglvSQLBrDbpDVVcSTqjTL)
