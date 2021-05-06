@@ -22,6 +22,8 @@ class Driver(metaclass=Singleton):
         self.options = ChromeOptions()
         self.options.add_argument("--window-size=1600, 490")
         self.options.add_argument("--disable-infobars")
+        self.options.add_argument("--no-sandbox")
+        self.options.add_argument("--disable-dev-shm-usage")
         self.options.headless = self.headless
         self.driver = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.GOOGLE).install(), options=self.options)
         self.driver.implicitly_wait(30)
