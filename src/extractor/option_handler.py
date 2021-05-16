@@ -1,13 +1,11 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+import json
+import os
 
-
-AZN_TO_USD = 0.59
-RUB_TO_USD = 0.013
-USD_TO_AZN = 1.70
-RUB_TO_AZN = 0.022
-USD_TO_RUB = 76.08
-AZN_TO_RUB = 44.75
+with open(os.path.abspath("src/currencies.json")) as file:
+    currencies = json.load(file)
+print(os.path.abspath("src/currencies.json"))
 
 
 class OptionsHandler:
@@ -25,10 +23,19 @@ class OptionHandlerInterface(ABC):
 
     @abstractmethod
     def define_options(self, **kwargs):
+        """
+        method defines provided options
+        :param kwargs: dict of options
+        """
         pass
 
     @abstractmethod
     def handle(self, api):
+        """
+        this method will  handle given api and return the new one
+        :param api: dict
+        :return: dict
+        """
         pass
 
 
@@ -46,21 +53,21 @@ class Filter(OptionHandlerInterface):
         for data in api['data']:
             if self.currency == 'USD':
                 if data['price_curr'] == 'AZN':
-                    data['price_val'] = round(data['price_val'] * AZN_TO_USD, 2)
+                    data['price_val'] = round(data['price_val'] * currencies["AZN_TO_USD"], 2)
                 elif data['price_curr'] == 'RUB':
-                    data['price_val'] = round(data['price_val'] * RUB_TO_USD, 2)
+                    data['price_val'] = round(data['price_val'] * currencies["RUB_TO_USD"], 2)
                 data['price_curr'] = 'USD'
             elif self.currency == 'AZN':
                 if data['price_curr'] == 'USD':
-                    data['price_val'] = round(data['price_val'] * USD_TO_AZN, 2)
+                    data['price_val'] = round(data['price_val'] * currencies["USD_TO_AZN"], 2)
                 elif data['price_curr'] == 'RUB':
-                    data['price_val'] = round(data['price_val'] * RUB_TO_AZN, 2)
+                    data['price_val'] = round(data['price_val'] * currencies["RUB_TO_AZN"], 2)
                 data['price_curr'] = 'AZN'
             elif self.currency == 'RUB':
                 if data['price_curr'] == 'USD':
-                    data['price_val'] = round(data['price_val'] * USD_TO_RUB, 2)
+                    data['price_val'] = round(data['price_val'] * currencies["USD_TO_RUB"], 2)
                 elif data['price_curr'] == 'AZN':
-                    data['price_val'] = round(data['price_val'] * AZN_TO_RUB, 2)
+                    data['price_val'] = round(data['price_val'] * currencies["AZN_TO_RUB"], 2)
                 data['price_curr'] = 'RUB'
 
         return api

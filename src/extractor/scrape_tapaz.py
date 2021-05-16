@@ -20,10 +20,12 @@ class Scrape_tapaz(AbstractScraper):
             for _ in range(3):
                 self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 time.sleep(self.timeout)
+
         elif self.mode == '2':
             for _ in range(10):
                 self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 time.sleep(self.timeout)
+
         elif self.mode == '3':
             number_of_scrolls = 0
             reached_page_end = False

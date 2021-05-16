@@ -27,7 +27,7 @@ class DistributorOptions(object):
         Adds an argument to the list
 
         :Args:
-         - Sets the arguments
+        :argument - Sets the arguments
         """
         if argument in self._possible_arguments:
             self._arguments.append(argument)
@@ -64,6 +64,10 @@ class Distributor:
         self.__full_api = {'tapaz': {}, 'amazon': {}, 'aliexpress': {}}
 
     def __argument_wrapper(self, options=None):
+        """
+        This method declares scrapers with given options. If not option is given, all web-scrapers will be declared
+        :param options: list property of DistributorOptions object
+        """
         if options:
             self.__possible_websites = {}
 

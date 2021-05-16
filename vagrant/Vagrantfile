@@ -14,8 +14,16 @@ if not plugins_to_install.empty?
     else
         abort "Installation of one or more plugins has failed. Aborting."
     end
+
+    if Vagrant::Util::Platform.windows?
+        unless Vagrant.has_plugin?("vagrant-winnfsd")
+            puts 'Installing vagrant-winnfsd Plugin...'
+            system "vagrant plugin install vagrant-winnfsd"
+        end
+    end
+    puts "Plugins have been installed."
 end
-puts "Plugins have been installed."
+
 
 # initScript will create new user, add it to sudoers group and call entrypoint.sh script inside that user's namespace.
 $initScript = <<-SCRIPT

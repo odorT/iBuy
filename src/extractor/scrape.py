@@ -77,7 +77,7 @@ class AbstractScraper(metaclass=abc.ABCMeta):
     @staticmethod
     def _price_formatter(price_value):
         """
-        this method cleans the price_value and returns pure float number
+        this method cleans the price_value and returns pure floating point number
         :param price_value: string
         :return: float
         """
